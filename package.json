@@ -1,0 +1,22 @@
+{
+  "name": "jsreport-xlsx",
+  "version": "0.0.1",
+  "description": "jsreport recipe rendering excels directly from open xml ",
+  "scripts": {
+    "test": "mocha test"
+  },
+  "keywords": [
+    "jsreport",
+    "analytics"
+  ],
+  "license": "LGPL",
+  "dependencies": {
+    "msexcel-builder-extended": "0.0.3",
+    "q": "^1.4.1",
+    "request": "^2.65.0",
+    "stream-to-array": "^2.2.0",
+    "uuid": "^2.0.1"
+  },
+  "author": "Jan Blaha",
+  "devDependencies": {}
+}

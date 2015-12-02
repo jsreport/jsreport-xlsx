@@ -15,6 +15,7 @@
   ],
   "license": "LGPL",
   "dependencies": {
+    "bluebird": "3.0.6",
     "msexcel-builder-extended": "0.0.3",
     "q": "1.4.1",
     "request": "2.65.0",

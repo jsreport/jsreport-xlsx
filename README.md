@@ -8,6 +8,7 @@ See http://jsreport.net/learn/xlsx
 ##Installation
 
 > **npm install jsreport-xlsx**
+
 ##Usage
 To use `recipe` in for template rendering set `template.recipe=xlsx` in the rendering request.
 

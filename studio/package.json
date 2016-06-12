@@ -1,0 +1,6 @@
+{
+  "name": "jsreport-xlsx-preview",
+  "scripts": {
+    "build": "set NODE_ENV=production&&node ../../../webpack/buildExtension.js"
+  }
+}

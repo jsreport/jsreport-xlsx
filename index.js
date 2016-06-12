@@ -1,4 +1,4 @@
-var main = require('./lib/xlsx.js')
+var main = require('./lib/index.js')
 var config = require('./jsreport.config.js')
 
 module.exports = function (options) {

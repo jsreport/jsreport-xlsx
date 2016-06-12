@@ -1,7 +1,7 @@
-# jsreport-excel
+# jsreport-xlsx
 
-[![NPM Version](http://img.shields.io/npm/v/jsreport-excel.svg?style=flat-square)](https://npmjs.com/package/jsreport-excel)
-[![Build Status](https://travis-ci.org/jsreport/jsreport-excel.png?branch=master)](https://travis-ci.org/jsreport/jsreport-excel)
+[![NPM Version](http://img.shields.io/npm/v/jsreport-xlsx.svg?style=flat-square)](https://npmjs.com/package/jsreport-xlsx)
+[![Build Status](https://travis-ci.org/jsreport/jsreport-xlsx.png?branch=master)](https://travis-ci.org/jsreport/jsreport-xlsx)
 
 > jsreport recipe which renders excel reports based on uploaded excel templates by modifying the xlsx source using predefined templating engine helpers
 

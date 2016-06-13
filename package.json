@@ -13,7 +13,7 @@
   "main": "index.js",
   "scripts": {
     "clean": "rimraf lib",
-    "build": "jsreport-studio-build && babel --presets es2015,stage-0 src --out-dir lib",
+    "build": "babel --presets es2015,stage-0 src --out-dir lib",
     "watch": "babel --watch --presets es2015,stage-0 src --out-dir lib",
     "lint": "standard src test",
     "test": "npm run build && cross-env DEBUG=jsreport mocha --compilers js:babel-register --timeout 7000",

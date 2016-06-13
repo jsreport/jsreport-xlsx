@@ -17,7 +17,7 @@
     "watch": "babel --watch --presets es2015,stage-0 src --out-dir lib",
     "lint": "standard src test",
     "test": "npm run build && cross-env DEBUG=jsreport mocha --compilers js:babel-register --timeout 7000",
-    "prepublish": "jsreport-studio-build && in-publish && npm-run-all lint clean build || not-in-publish"
+    "prepublish": "in-publish && jsreport-studio-build && npm-run-all lint clean build || not-in-publish"
   },
   "standard": {
     "ignore": [
@@ -35,6 +35,7 @@
     "bluebird": "3.4.0",
     "file-type": "3.8.0",
     "get-stream": "2.2.0",
+    "in-publish": "2.0.0",
     "lodash": "4.13.1",
     "msexcel-builder-extended": "0.0.3",
     "pify": "2.3.0",

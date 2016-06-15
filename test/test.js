@@ -77,4 +77,37 @@ describe('excel recipe', () => {
       })
     }).catch(done)
   })
+
+  it('should return iframe in preview', (done) => {
+    return reporter.render({
+      options: {
+        preview: true
+      },
+      template: {
+        recipe: 'xlsx',
+        engine: 'handlebars',
+        content: '{{{xlsxPrint}}}'
+      }
+    }).then((res) => {
+      res.content.toString().should.containEql('iframe')
+      done()
+    }).catch(done)
+  })
+
+  it('should disable preview if the options has previewInExcelOnline === false', (done) => {
+    reporter.options.xlsx = { previewInExcelOnline: false }
+    return reporter.render({
+      options: {
+        preview: true
+      },
+      template: {
+        recipe: 'xlsx',
+        engine: 'handlebars',
+        content: '{{{xlsxPrint}}}'
+      }
+    }).then((res) => {
+      res.content.toString().should.not.containEql('iframe')
+      done()
+    }).catch(done)
+  })
 })

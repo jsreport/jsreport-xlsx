@@ -3,14 +3,14 @@ import httpRequest from 'request'
 import toArray from 'stream-to-array'
 const toArrayAsync = Promise.promisify(toArray)
 
-const preview = (request, response) => {
+const preview = (request, response, options) => {
   return new Promise((resolve, reject) => {
-    const req = httpRequest.post('http://jsreport.net/temp', (err, resp, body) => {
+    const req = httpRequest.post(options.publicUriForPreview || 'http://jsreport.net/temp', (err, resp, body) => {
       if (err) {
         return reject(err)
       }
       response.content = new Buffer('<iframe style="height:100%;width:100%" src="https://view.officeapps.live.com/op/view.aspx?src=' +
-        encodeURIComponent('http://jsreport.net/temp/' + body) + '" />')
+        encodeURIComponent((options.publicUriForPreview || 'http://jsreport.net/temp') + '/' + body) + '" />')
       response.headers['Content-Type'] = 'text/html'
       // sometimes files is not completely flushed and excel online cannot find it immediately
       setTimeout(function () {
@@ -25,8 +25,9 @@ const preview = (request, response) => {
 }
 
 export default function responseXlsx (request, response) {
-  if (request.options.preview) {
-    return preview(request, response)
+  let options = request.reporter.options.xlsx || {}
+  if (request.options.preview && options.previewInExcelOnline !== false) {
+    return preview(request, response, options)
   }
 
   response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheetf'

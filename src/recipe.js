@@ -48,7 +48,7 @@ export default function (req, res) {
     output.on('close', function () {
       req.logger.debug('Successfully zipped now.')
       res.stream = fs.createReadStream(xlsxFileName)
-      responseXlsx(req, res).then(resolve).catch(xlsxFileName)
+      responseXlsx(req, res).then(() => resolve()).catch((e) => reject(e))
     })
 
     archive.on('error', (err) => reject(err))

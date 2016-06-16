@@ -58,10 +58,10 @@
     "eslint-config-standard-jsx": "1.2.1",
     "eslint-plugin-babel": "3.2.0",
     "in-publish": "2.0.0",
-    "jsreport-core": "0.6.4",
-    "jsreport-handlebars": "0.3.1",
-    "jsreport-studio-dev": "0.2.8",
-    "jsreport-templates": "0.3.0",
+    "jsreport-core": "next",
+    "jsreport-handlebars": "next",
+    "jsreport-studio-dev": "0.3.0",
+    "jsreport-templates": "next",
     "mocha": "2.5.3",
     "npm-run-all": "1.2.12",
     "rimraf": "2.4.3",
@@ -70,5 +70,8 @@
     "xlsx": "0.8.0"
   },
   "author": "Jan Blaha",
-  "license": "MIT"
+  "license": "MIT",
+  "files": [
+    "lib", "studio", "static", "index.js", "jsreport.config.js"
+  ]
 }

@@ -1,5 +1,5 @@
 module.exports = {
   'name': 'xlsx',
-  'depends': ['templates', 'data'],
+  'dependencies': ['templates', 'data'],
   'main': 'lib/index.js'
 }

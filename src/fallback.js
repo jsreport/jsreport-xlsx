@@ -14,7 +14,7 @@ export default function fallback (previousError, request, response) {
   var start = result.indexOf('<worksheet')
   var sheetNumber = 1
   while (start >= 0) {
-    var worksheet = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' + result.substring(
+    var worksheet = "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>" + result.substring(
         start,
         result.indexOf('</worksheet>', start) + '</worksheet>'.length, start)
 
@@ -32,7 +32,7 @@ export default function fallback (previousError, request, response) {
   }
 
   if (result.indexOf('<styleSheet') > 0) {
-    var stylesheet = '<?xml version="1.0" encoding="UTF-8"" standalone="yes"?>' + result.substring(
+    var stylesheet = "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>" + result.substring(
         result.indexOf('<styleSheet'),
         result.indexOf('</styleSheet>') + '</styleSheet>'.length)
     workbook.st.raw(stylesheet)

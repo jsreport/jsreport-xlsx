@@ -5,22 +5,66 @@
 
 (function (global) {
   function print () {
+    ensureWorksheetOrder(this.ctx.root.$xlsxTemplate)
     return JSON.stringify(this.ctx.root.$xlsxTemplate)
   }
 
-  function fixSheetDataEmptyString () {
-    if (!this.ctx.data.$xlsxTemplate) {
-      return
-    }
-    var sheet = this.ctx.data.$xlsxTemplate['xl/worksheets/sheet1.xml']
-    if (!sheet) {
-      return
-    }
+  var worksheetOrder = {
+    dimension: 0,
+    sheetViews: 1,
+    sheetFormatPr: 2,
+    cols: 3,
+    sheetData: 4,
+    sheetCalcPr: 5,
+    sheetProtection: 6,
+    protectedRanges: 7,
+    scenarios: 8,
+    autoFilter: 9,
+    sortState: 10,
+    dataConsolidate: 11,
+    customSheetViews: 12,
+    mergeCells: 13,
+    phoneticPr: 14,
+    conditionalFormatting: 15,
+    dataValidations: 16,
+    hyperlinks: 17,
+    printOptions: 18,
+    pageMargins: 19,
+    pageSetup: 20,
+    headerFooter: 21,
+    rowBreaks: 22,
+    colBreaks: 23,
+    customProperties: 24,
+    cellWatches: 25,
+    ignoredErrors: 26,
+    smartTags: 27,
+    drawing: 28,
+    picture: 29,
+    oleObjects: 30,
+    controls: 31,
+    webPublishItems: 32,
+    tableParts: 33,
+    extLst: 34
+  }
 
-    if (!sheet.worksheet.sheetData[0].row) {
-      sheet.worksheet.sheetData[0] = {
-        row: []
+  function ensureWorksheetOrder(data) {
+    for (var key in data) {
+      if (key.indexOf('xl/worksheets/') !== 0) {
+        continue
       }
+
+      if (!data[key] || !data[key].worksheet) {
+        continue
+      }
+
+      var worksheet = data[key].worksheet
+      var sortedWorksheet = {}
+      Object.keys(worksheet).sort(function (a, b) {
+        return worksheetOrder[a] && worksheetOrder[b] && (worksheetOrder[a] > worksheetOrder[b])
+      }).forEach(function (a) {
+        sortedWorksheet[a] = worksheet[a]
+      })
+      data[key].worksheet = sortedWorksheet
     }
   }
 
@@ -29,8 +73,13 @@
       var holder = new Function('obj', 'return obj.' + path.split('.').slice(0, -1).join('.'))(this.ctx.root.$xlsxTemplate[filePath])
       var pathFragmentToBeReplaced = path.split('.')[path.split('.').length - 1]
       this.$replacedValue = new Function('obj', 'return obj.' + pathFragmentToBeReplaced)(holder)
-      var json = xml2json(this.tagCtx.render(this.ctx.data))
-      new Function('obj', 'json', 'return obj.' + pathFragmentToBeReplaced + ' = json')(holder, json)
+      var contentToReplace = this.tagCtx.render(this.ctx.data)
+      try {
+        contentToReplace = xml2jsonUnwrap(contentToReplace)
+      } catch(e) {
+        // not xml, it is ok, put it as the string value inside
+      }
+      new Function('obj', 'contentToReplace', 'return obj.' + pathFragmentToBeReplaced + ' = contentToReplace')(holder, contentToReplace)
     } else {
       this.ctx.root.$xlsxTemplate[filePath] = xml2json(this.tagCtx.render(this.ctx.data))
     }
@@ -57,9 +106,30 @@
 
   function add (filePath, xmlPath) {
     var obj = this.ctx.root.$xlsxTemplate[filePath]
-    var collection = new Function('obj', 'return obj.' + xmlPath)(obj)
+    var collection = safeGet(obj, xmlPath)
     collection.push(xml2jsonUnwrap(this.tagCtx.render(this.ctx.data)))
     return ''
+  }
+
+  /**
+   * Safely go through object path and create the missing object parts with
+   * empty array or object to be compatible with xml -> json represantation
+   */
+  function safeGet(obj, path) {
+    var originalObj = obj
+    var paths = path.replace('[', '.').replace(']', '').split('.')
+
+    var previous = {}
+    for (var i = 0; i < paths.length; i++) {
+      var objReference = 'obj["' + paths[i] + '"]'
+      //if the next accessor is to array, we initialize missing parths as array, otherwise as object
+      var emptySafe = ((i === paths.length  - 1) || !isNaN(paths[i + 1])) ? '[]' : '{}'
+      new Function('obj', objReference + ' = ' + objReference + ' || ' + emptySafe)(obj)
+      obj = new Function('obj', 'return ' + objReference)(obj)
+      previous = obj
+    }
+
+    return obj
   }
 
   function addSheet (name) {
@@ -184,7 +254,6 @@
     const relName = 'rId' + relNumber
 
     if (!this.ctx.root.$xlsxTemplate[drawingRelPath].Relationships.Relationship.filter((r) => r.$.Id === imageName).length) {
-      console.log('adding ' + imageName)
       this.ctx.root.$xlsxTemplate[drawingRelPath].Relationships.Relationship.push({
         $: {
           Id: relName,
@@ -261,8 +330,6 @@
           this.ctx.data = this.tagCtx.view.data
         }
       }
-
-      fixSheetDataEmptyString.call(this)
 
       return fn.apply(this, arguments)
     }

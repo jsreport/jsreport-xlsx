@@ -1,7 +1,7 @@
-/*eslint no-unused-vars: 1*/
-/*eslint no-new-func: 0*/
-/*global __rootDirectory*/
-/*global m*/
+/* eslint no-unused-vars: 1 */
+/* eslint no-new-func: 0 */
+/* *global __rootDirectory */
+/* global m */
 
 (function (global) {
   var path = require('path')
@@ -49,7 +49,7 @@
     extLst: 34
   }
 
-  function ensureWorksheetOrder(data) {
+  function ensureWorksheetOrder (data) {
     for (var key in data) {
       if (key.indexOf('xl/worksheets/') !== 0) {
         continue
@@ -78,7 +78,7 @@
       var contentToReplace = this.tagCtx.render(this.ctx.data)
       try {
         contentToReplace = xml2jsonUnwrap(contentToReplace)
-      } catch(e) {
+      } catch (e) {
         // not xml, it is ok, put it as the string value inside
       }
       new Function('obj', 'contentToReplace', 'return obj.' + pathFragmentToBeReplaced + ' = contentToReplace')(holder, contentToReplace)
@@ -124,8 +124,8 @@
     var previous = {}
     for (var i = 0; i < paths.length; i++) {
       var objReference = 'obj["' + paths[i] + '"]'
-      //if the next accessor is to array, we initialize missing parths as array, otherwise as object
-      var emptySafe = ((i === paths.length  - 1) || !isNaN(paths[i + 1])) ? '[]' : '{}'
+      // if the next accessor is to array, we initialize missing parths as array, otherwise as object
+      var emptySafe = ((i === paths.length - 1) || !isNaN(paths[i + 1])) ? '[]' : '{}'
       new Function('obj', objReference + ' = ' + objReference + ' || ' + emptySafe)(obj)
       obj = new Function('obj', 'return ' + objReference)(obj)
       previous = obj
@@ -231,7 +231,7 @@
       this.ctx.root.$xlsxTemplate['xl/media/' + name] = this.tagCtx.render(this.ctx.data)
     }
 
-    if (!this.ctx.root.$xlsxTemplate['[Content_Types].xml'].Types.Default.filter((t) => t.$.Extension === 'png').length) {
+    if (!this.ctx.root.$xlsxTemplate['[Content_Types].xml'].Types.Default.filter(function (t) { return t.$.Extension === 'png' }).length) {
       this.ctx.root.$xlsxTemplate['[Content_Types].xml'].Types.Default.push({
         $: {
           Extension: 'png',
@@ -255,7 +255,7 @@
     const relNumber = this.ctx.root.$xlsxTemplate[drawingRelPath].Relationships.Relationship.length + 1
     const relName = 'rId' + relNumber
 
-    if (!this.ctx.root.$xlsxTemplate[drawingRelPath].Relationships.Relationship.filter((r) => r.$.Id === imageName).length) {
+    if (!this.ctx.root.$xlsxTemplate[drawingRelPath].Relationships.Relationship.filter(function (r) { return r.$.Id === imageName }).length) {
       this.ctx.root.$xlsxTemplate[drawingRelPath].Relationships.Relationship.push({
         $: {
           Id: relName,

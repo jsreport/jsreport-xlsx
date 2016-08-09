@@ -4,6 +4,8 @@
 /*global m*/
 
 (function (global) {
+  var path = require('path')
+
   function print () {
     ensureWorksheetOrder(this.ctx.root.$xlsxTemplate)
     return JSON.stringify(this.ctx.root.$xlsxTemplate)
@@ -115,7 +117,7 @@
    * Safely go through object path and create the missing object parts with
    * empty array or object to be compatible with xml -> json represantation
    */
-  function safeGet(obj, path) {
+  function safeGet (obj, path) {
     var originalObj = obj
     var paths = path.replace('[', '.').replace(']', '').split('.')
 
@@ -286,8 +288,8 @@
     }
   }
 
-  var _ = safeRequire('lodash') || safeRequire(m.data.$xlsxModuleDirname + '/node_modules/lodash')
-  var xml2js = safeRequire('xml2js') || safeRequire(m.data.$xlsxModuleDirname + '/node_modules/xml2js')
+  var _ = safeRequire('lodash') || safeRequire(path.join(m.data.$xlsxModuleDirname, '/node_modules/lodash'))
+  var xml2js = safeRequire('xml2js') || safeRequire(path.join(m.data.$xlsxModuleDirname, '/node_modules/xml2js'))
 
   var xml2jsonUnwrap = function (xml) {
     var result = xml2json(xml)

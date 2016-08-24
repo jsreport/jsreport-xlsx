@@ -11,7 +11,7 @@ See the docs http://jsreport.net/learn/xlsx
 
 ##Installation
 
->npm install jsreport-excel
+>npm install jsreport-xlsx
 
 
 
@@ -19,6 +19,6 @@ See the docs http://jsreport.net/learn/xlsx
 
 ```js
 var jsreport = require('jsreport-core')()
-jsreport.use(require('jsreport-excel')())
+jsreport.use(require('jsreport-xlsx')())
 
 ```

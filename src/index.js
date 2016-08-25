@@ -4,6 +4,7 @@ import shortid from 'shortid'
 import fs from 'fs'
 import path from 'path'
 import Promise from 'bluebird'
+import vm from 'vm'
 import responseXlsx from './responseXlsx.js'
 
 const FS = Promise.promisifyAll(fs)
@@ -88,7 +89,14 @@ module.exports = (reporter, definition) => {
       req.data.$xlsxModuleDirname = path.join(__dirname, '../')
 
       return FS.readFileAsync(path.join(__dirname, '../', 'static', 'helpers.js'), 'utf8').then(
-        (content) => (req.template.helpers = content + '\n' + (req.template.helpers || '')))
+        (content) => {
+          if (req.template.helpers && typeof req.template.helpers === 'object') {
+            req.template.helpers.require = require
+            return vm.runInNewContext(content, req.template.helpers)
+          }
+
+          req.template.helpers = content + '\n' + (req.template.helpers || '')
+        })
     })
   })
 }

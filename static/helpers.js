@@ -12,7 +12,8 @@
   }
 
   var worksheetOrder = {
-    dimension: 0,
+    sheetPr: -2,
+    dimension: -1,
     sheetViews: 1,
     sheetFormatPr: 2,
     cols: 3,
@@ -62,7 +63,10 @@
       var worksheet = data[key].worksheet
       var sortedWorksheet = {}
       Object.keys(worksheet).sort(function (a, b) {
-        return worksheetOrder[a] && worksheetOrder[b] && (worksheetOrder[a] > worksheetOrder[b])
+        if(!worksheetOrder[a]) return -1 // undefined in worksheetOrder goes at top of list
+        if(!worksheetOrder[b]) return 1
+        if(worksheetOrder[a] == worksheetOrder[b]) return 0
+        return worksheetOrder[a] > worksheetOrder[b] ? 1 : -1
       }).forEach(function (a) {
         sortedWorksheet[a] = worksheet[a]
       })

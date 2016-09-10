@@ -58,6 +58,12 @@ module.exports = (reporter, definition) => {
       doc.shortid = doc.shortid || shortid.generate()
       return serialize(doc.contentRaw, reporter.options.tempDirectory).then((serialized) => (doc.content = serialized))
     })
+
+    reporter.documentStore.collection('xlsxTemplates').beforeUpdateListeners.add('xlsxTemplates', function (query, update, req) {
+      if (update.$set && update.$set.contentRaw) {
+        return serialize(update.$set.content, reporter.options.tempDirectory).then((serialized) => (update.$set.contentRaw = serialized))
+      }
+    })
   })
 
   reporter.beforeRenderListeners.insert({ after: 'data' }, 'xlsxTemplates', (req) => {

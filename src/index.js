@@ -61,7 +61,7 @@ module.exports = (reporter, definition) => {
 
     reporter.documentStore.collection('xlsxTemplates').beforeUpdateListeners.add('xlsxTemplates', function (query, update, req) {
       if (update.$set && update.$set.contentRaw) {
-        return serialize(update.$set.content, reporter.options.tempDirectory).then((serialized) => (update.$set.contentRaw = serialized))
+        return serialize(update.$set.content, reporter.options.tempDirectory).then((serialized) => (update.$set.content = serialized))
       }
     })
   })

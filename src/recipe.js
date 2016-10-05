@@ -3,9 +3,10 @@ import path from 'path'
 import Promise from 'bluebird'
 import archiver from 'archiver'
 import uuid from 'uuid'
-import xml2js from 'xml2js'
 import fallback from './fallback.js'
 import responseXlsx from './responseXlsx.js'
+import jsonToXml from './jsonToXml.js'
+import xml2js from 'xml2js'
 
 export default function (req, res) {
   const contentString = res.content.toString()
@@ -21,8 +22,9 @@ export default function (req, res) {
   Object.keys(content).forEach((k) => {
     var buf = null
     if (k.includes('.xml')) {
-      const builder = new xml2js.Builder()
-      buf = new Buffer(builder.buildObject(content[k]), 'utf8')
+      buf = new Buffer(jsonToXml(content[k]), 'utf8')
+      //const builder = new xml2js.Builder()
+      //buf = new Buffer(builder.buildObject(content[k]), 'utf8')
     }
 
     if (k.includes('xl/media/') || k.includes('.bin')) {

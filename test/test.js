@@ -110,4 +110,49 @@ describe('excel recipe', () => {
       done()
     }).catch(done)
   })
+
+  it('should be able to use string helpers', (done) => {
+    reporter.render({
+      template: {
+        recipe: 'xlsx',
+        engine: 'handlebars',
+        helpers: 'function foo() { return "<c><v>11</v></c>" }',
+        content: fs.readFileSync(path.join(__dirname, 'content', 'add-row-block-helper.handlebars'), 'utf8')
+      }
+    }).then((res) => {
+      xlsx.read(res.content).Sheets.Sheet1.A1.v.should.be.eql(11)
+      done()
+    }).catch(done)
+  })
+})
+
+describe('excel recipe with in process helpers', () => {
+  let reporter
+
+  beforeEach((done) => {
+    reporter = new Reporter({
+      rootDirectory: path.join(__dirname, '../'),
+      tasks: { strategy: 'in-process' }
+    })
+
+    reporter.init().then(function () {
+      done()
+    }).fail(done)
+  })
+
+  it('should be able to use native helpers', (done) => {
+    reporter.render({
+      template: {
+        recipe: 'xlsx',
+        engine: 'handlebars',
+        helpers: {
+          foo: () => '<c><v>11</v></c>'
+        },
+        content: fs.readFileSync(path.join(__dirname, 'content', 'add-row-block-helper.handlebars'), 'utf8')
+      }
+    }).then((res) => {
+      xlsx.read(res.content).Sheets.Sheet1.A1.v.should.be.eql(11)
+      done()
+    }).catch(done)
+  })
 })

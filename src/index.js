@@ -4,6 +4,7 @@ import shortid from 'shortid'
 import fs from 'fs'
 import path from 'path'
 import Promise from 'bluebird'
+import vm from 'vm'
 import responseXlsx from './responseXlsx.js'
 
 const FS = Promise.promisifyAll(fs)
@@ -21,6 +22,7 @@ module.exports = (reporter, definition) => {
   reporter.options.tasks = reporter.options.tasks || {}
   reporter.options.tasks.allowedModules = reporter.options.tasks.allowedModules || []
   if (reporter.options.tasks.allowedModules !== '*') {
+    reporter.options.tasks.allowedModules.push('path')
     reporter.options.tasks.allowedModules.push('lodash')
     reporter.options.tasks.allowedModules.push(path.join(__dirname, '../node_modules/lodash'))
     reporter.options.tasks.allowedModules.push('xml2js')
@@ -56,6 +58,12 @@ module.exports = (reporter, definition) => {
       doc.shortid = doc.shortid || shortid.generate()
       return serialize(doc.contentRaw, reporter.options.tempDirectory).then((serialized) => (doc.content = serialized))
     })
+
+    reporter.documentStore.collection('xlsxTemplates').beforeUpdateListeners.add('xlsxTemplates', function (query, update, req) {
+      if (update.$set && update.$set.contentRaw) {
+        return serialize(update.$set.content, reporter.options.tempDirectory).then((serialized) => (update.$set.content = serialized))
+      }
+    })
   })
 
   reporter.beforeRenderListeners.insert({ after: 'data' }, 'xlsxTemplates', (req) => {
@@ -87,7 +95,14 @@ module.exports = (reporter, definition) => {
       req.data.$xlsxModuleDirname = path.join(__dirname, '../')
 
       return FS.readFileAsync(path.join(__dirname, '../', 'static', 'helpers.js'), 'utf8').then(
-        (content) => (req.template.helpers = content + '\n' + (req.template.helpers || '')))
+        (content) => {
+          if (req.template.helpers && typeof req.template.helpers === 'object') {
+            req.template.helpers.require = require
+            return vm.runInNewContext(content, req.template.helpers)
+          }
+
+          req.template.helpers = content + '\n' + (req.template.helpers || '')
+        })
     })
   })
 }

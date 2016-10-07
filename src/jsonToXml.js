@@ -1,3 +1,5 @@
+import os from 'os'
+
 const convertAttributes = (obj) => {
   var xml = ''
   if (obj.$) {
@@ -29,9 +31,9 @@ const convertBody = (obj) => {
         if (Object.keys(obj[key][i]).length > 1 || Object.keys(obj[key][i])[0] !== '$') {
           var body = convertBody(obj[key][i])
           xml += '<' + key + convertAttributes(obj[key][i])
-          xml += body ? (`>\n${body}\n</${key}>\n`) : '/>\n'
+          xml += body ? (`>${body}</${key}>\n`) : '/>'
         } else {
-          xml += `<${key}${convertAttributes(obj[key][i])}/>\n`
+          xml += `<${key}${convertAttributes(obj[key][i])}/>`
         }
       }
 
@@ -46,10 +48,10 @@ const convertBody = (obj) => {
 
     xml += convertAttributes(obj[key])
     var body = convertBody(obj[key])
-    xml += body ? (`>\n${body}\n</${key}>\n`) : '/>\n'
+    xml += body ? (`>${body}</${key}>`) : '/>'
   }
 
   return xml
 }
 
-module.exports = (o) => ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' + convertBody(o))
+module.exports = (o) => ('<?xml version="1.0" encoding="UTF-8"?>\n' + convertBody(o))

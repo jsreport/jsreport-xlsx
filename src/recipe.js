@@ -23,8 +23,6 @@ export default function (req, res) {
     var buf = null
     if (k.includes('.xml')) {
       buf = new Buffer(jsonToXml(content[k]), 'utf8')
-      //const builder = new xml2js.Builder()
-      //buf = new Buffer(builder.buildObject(content[k]), 'utf8')
     }
 
     if (k.includes('xl/media/') || k.includes('.bin')) {

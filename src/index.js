@@ -22,7 +22,6 @@ module.exports = (reporter, definition) => {
   reporter.options.tasks = reporter.options.tasks || {}
   reporter.options.tasks.allowedModules = reporter.options.tasks.allowedModules || []
   if (reporter.options.tasks.allowedModules !== '*') {
-    reporter.options.tasks.allowedModules.push('fs')
     reporter.options.tasks.allowedModules.push('path')
     reporter.options.tasks.allowedModules.push('lodash')
     reporter.options.tasks.allowedModules.push(path.join(__dirname, '../node_modules/lodash'))

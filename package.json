@@ -37,6 +37,7 @@
     "get-stream": "2.2.0",
     "in-publish": "2.0.0",
     "lodash": "4.13.1",
+    "merge2": "1.0.2",
     "msexcel-builder-extended": "0.0.3",
     "pify": "2.3.0",
     "request": "2.72.0",
@@ -72,6 +73,10 @@
   "author": "Jan Blaha",
   "license": "MIT",
   "files": [
-    "lib", "studio", "static", "index.js", "jsreport.config.js"
+    "lib",
+    "studio",
+    "static",
+    "index.js",
+    "jsreport.config.js"
   ]
 }

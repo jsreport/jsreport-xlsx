@@ -8,7 +8,11 @@
 
   function print () {
     ensureWorksheetOrder(this.ctx.root.$xlsxTemplate)
-    return JSON.stringify(this.ctx.root.$xlsxTemplate)
+    bufferedFlush(this.ctx.root)
+    return JSON.stringify({
+      $xlsxTemplate: this.ctx.root.$xlsxTemplate,
+      $files: this.ctx.root.$files || []
+    })
   }
 
   var worksheetOrder = {
@@ -63,9 +67,9 @@
       var worksheet = data[key].worksheet
       var sortedWorksheet = {}
       Object.keys(worksheet).sort(function (a, b) {
-        if(!worksheetOrder[a]) return -1 // undefined in worksheetOrder goes at top of list
-        if(!worksheetOrder[b]) return 1
-        if(worksheetOrder[a] == worksheetOrder[b]) return 0
+        if (!worksheetOrder[a]) return -1 // undefined in worksheetOrder goes at top of list
+        if (!worksheetOrder[b]) return 1
+        if (worksheetOrder[a] == worksheetOrder[b]) return 0
         return worksheetOrder[a] > worksheetOrder[b] ? 1 : -1
       }).forEach(function (a) {
         sortedWorksheet[a] = worksheet[a]
@@ -110,10 +114,52 @@
     return ''
   }
 
+  function flush (buf, root) {
+    root.$files.push(fsproxy.write(root.$tempDirectory, buf.data))
+    buf.collection.push({ $$: root.$files.length - 1 })
+    buf.data = ''
+  }
+
+  function bufferedFlush (root) {
+    let buffers = root.$buffers || {}
+
+    Object.keys(buffers).forEach(function (f) {
+      Object.keys(buffers[f]).forEach(function (k) {
+        if (buffers[f][k].data.length) {
+          flush(buffers[f][k], root)
+        }
+      })
+    })
+  }
+
+  var fsproxy
+
+  function bufferedAppend (file, xmlPath, root, collection, data) {
+    root.$files = root.$files || []
+    let buffers = root.$buffers = root.$buffers || {}
+    buffers[file] = buffers[file] || {}
+
+    buffers[file][xmlPath] = buffers[file][xmlPath] || { collection: collection, data: '' }
+
+    buffers[file][xmlPath].data += data
+
+    if (buffers[file][xmlPath].data.length > root.$addBufferSize) {
+      flush(buffers[file][xmlPath], root)
+    }
+  }
+
   function add (filePath, xmlPath) {
+    fsproxy = safeRequire(path.join(this.ctx.root.$xlsxModuleDirname, '/lib/fsproxy.js'))
+
     var obj = this.ctx.root.$xlsxTemplate[filePath]
     var collection = safeGet(obj, xmlPath)
-    collection.push(xml2jsonUnwrap(this.tagCtx.render(this.ctx.data)))
+
+    if (collection.length < this.ctx.root.$numberOfParsedAddIterations) {
+      collection.push(xml2jsonUnwrap(this.tagCtx.render(this.ctx.data).trim()))
+      return ''
+    }
+
+    bufferedAppend(filePath, xmlPath, this.ctx.root, collection, this.tagCtx.render(this.ctx.data).trim())
     return ''
   }
 

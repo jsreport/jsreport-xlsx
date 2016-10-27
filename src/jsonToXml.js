@@ -1,5 +1,3 @@
-import os from 'os'
-
 const convertAttributes = (obj) => {
   var xml = ''
   if (obj.$) {
@@ -11,47 +9,60 @@ const convertAttributes = (obj) => {
   return xml
 }
 
-const convertBody = (obj) => {
-  if (obj == null) {
-    return ''
-  }
+module.exports = (o) => {
+  let files = []
 
-  if (typeof obj === 'string') {
-    return obj.toString()
-  }
-
-  var xml = ''
-  for (var key in obj) {
-    if (obj[key] == null || key === '$') {
-      continue
+  const convertBody = (obj) => {
+    if (obj == null) {
+      return ''
     }
 
-    if (Array.isArray(obj[key])) {
-      for (var i = 0; i < obj[key].length; i++) {
-        if (Object.keys(obj[key][i]).length > 1 || Object.keys(obj[key][i])[0] !== '$') {
-          var body = convertBody(obj[key][i])
-          xml += '<' + key + convertAttributes(obj[key][i])
-          xml += body ? (`>${body}</${key}>\n`) : '/>'
-        } else {
-          xml += `<${key}${convertAttributes(obj[key][i])}/>`
-        }
+    if (typeof obj === 'string') {
+      return obj.toString()
+    }
+
+    var xml = ''
+    for (var key in obj) {
+      if (obj[key] == null || key === '$') {
+        continue
       }
 
-      continue
+      if (Array.isArray(obj[key])) {
+        for (var i = 0; i < obj[key].length; i++) {
+          if (obj[key][i].$$ != null) {
+            files.push(obj[key][i].$$)
+            xml += '&&'
+            continue
+          }
+
+          if (Object.keys(obj[key][i]).length > 1 || Object.keys(obj[key][i])[0] !== '$') {
+            var body = convertBody(obj[key][i])
+            xml += '<' + key + convertAttributes(obj[key][i])
+            xml += body ? (`>${body}</${key}>\n`) : '/>'
+          } else {
+            xml += `<${key}${convertAttributes(obj[key][i])}/>`
+          }
+        }
+
+        continue
+      }
+
+      if (key === '_') {
+        return obj[key].toString()
+      }
+
+      xml += '<' + key
+
+      xml += convertAttributes(obj[key])
+      body = convertBody(obj[key])
+      xml += body ? (`>${body}</${key}>`) : '/>'
     }
 
-    if (key === '_') {
-      return obj[key].toString()
-    }
-
-    xml += '<' + key
-
-    xml += convertAttributes(obj[key])
-    var body = convertBody(obj[key])
-    xml += body ? (`>${body}</${key}>`) : '/>'
+    return xml
   }
 
-  return xml
+  return {
+    xml: '<?xml version="1.0" encoding="UTF-8"?>\n' + convertBody(o),
+    files: files
+  }
 }
-
-module.exports = (o) => ('<?xml version="1.0" encoding="UTF-8"?>\n' + convertBody(o))

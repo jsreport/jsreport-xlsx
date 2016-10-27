@@ -16,17 +16,18 @@ module.exports = (reporter, definition) => {
 
   reporter.extensionsManager.recipes.push({
     name: 'xlsx',
-    execute: recipe
+    execute: () => {}
   })
 
   reporter.options.tasks = reporter.options.tasks || {}
   reporter.options.tasks.allowedModules = reporter.options.tasks.allowedModules || []
   if (reporter.options.tasks.allowedModules !== '*') {
+    reporter.options.tasks.allowedModules.push('fs')
     reporter.options.tasks.allowedModules.push('path')
     reporter.options.tasks.allowedModules.push('lodash')
     reporter.options.tasks.allowedModules.push(path.join(__dirname, '../node_modules/lodash'))
     reporter.options.tasks.allowedModules.push('xml2js')
-    reporter.options.tasks.allowedModules.push(path.join(__dirname, '../node_modules/xml2js'))
+    reporter.options.tasks.allowedModules.push(path.join(__dirname, '../lib/fsproxy.js'))
   }
 
   reporter.documentStore.registerEntityType('XlsxTemplateType', {
@@ -61,9 +62,15 @@ module.exports = (reporter, definition) => {
 
     reporter.documentStore.collection('xlsxTemplates').beforeUpdateListeners.add('xlsxTemplates', function (query, update, req) {
       if (update.$set && update.$set.contentRaw) {
-        return serialize(update.$set.content, reporter.options.tempDirectory).then((serialized) => (update.$set.content = serialized))
+        return serialize(update.$set.contentRaw, reporter.options.tempDirectory).then((serialized) => (update.$set.content = serialized))
       }
     })
+  })
+
+  reporter.afterTemplatingEnginesExecutedListeners.add('xlsxTemplates', (req, res) => {
+    if (req.template.recipe === 'xlsx') {
+      return recipe(req, res)
+    }
   })
 
   reporter.beforeRenderListeners.insert({ after: 'data' }, 'xlsxTemplates', (req) => {
@@ -93,6 +100,9 @@ module.exports = (reporter, definition) => {
       req.data = req.data || {}
       req.data.$xlsxTemplate = t
       req.data.$xlsxModuleDirname = path.join(__dirname, '../')
+      req.data.$tempDirectory = reporter.options.tempDirectory
+      req.data.$addBufferSize = definition.options.addBufferSize || 50000000
+      req.data.$numberOfParsedAddIterations = definition.options.numberOfParsedAddIterations == null ? 50 : definition.options.numberOfParsedAddIterations
 
       return FS.readFileAsync(path.join(__dirname, '../', 'static', 'helpers.js'), 'utf8').then(
         (content) => {

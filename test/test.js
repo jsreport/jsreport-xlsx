@@ -3,6 +3,7 @@ import path from 'path'
 import xlsx from 'xlsx'
 import 'should'
 import fs from 'fs'
+import _ from 'lodash'
 
 describe('excel recipe', () => {
   let reporter
@@ -45,6 +46,22 @@ describe('excel recipe', () => {
   it('xlsxAdd add-row', test('add-row.handlebars', (workbook) => {
     workbook.Sheets.Sheet1.A1.should.be.ok
   }))
+
+  it('xlsxAdd add many row', () => {
+    return reporter.render({
+      template: {
+        recipe: 'xlsx',
+        engine: 'handlebars',
+        content: fs.readFileSync(path.join(__dirname, 'content', 'add-many-rows.handlebars'), 'utf8')
+      },
+      data: {
+        numbers: _.range(0, 1000)
+      }
+    }).then((res) => {
+      xlsx.read(res.content).Sheets.Sheet1.A1.should.be.ok
+      xlsx.read(res.content).Sheets.Sheet1.A1000.should.be.ok
+    })
+  })
 
   it('xlsxReplace replace-sheet', test('replace-sheet.handlebars', (workbook) => {
     workbook.Sheets.Sheet1.A1.should.be.ok
@@ -123,6 +140,38 @@ describe('excel recipe', () => {
       xlsx.read(res.content).Sheets.Sheet1.A1.v.should.be.eql(11)
       done()
     }).catch(done)
+  })
+})
+
+describe('excel recipe with disabled add parsing', () => {
+  let reporter
+
+  beforeEach(() => {
+    reporter = new Reporter({
+      rootDirectory: path.join(__dirname, '../'),
+      xlsx: {
+        numberOfParsedAddIterations: 0,
+        addBufferSize: 200
+      }
+    })
+
+    return reporter.init()
+  })
+
+  it('should be add row', () => {
+    return reporter.render({
+      template: {
+        recipe: 'xlsx',
+        engine: 'handlebars',
+        content: fs.readFileSync(path.join(__dirname, 'content', 'add-many-rows.handlebars'), 'utf8')
+      },
+      data: {
+        numbers: _.range(0, 1000)
+      }
+    }).then((res) => {
+      xlsx.read(res.content).Sheets.Sheet1.A1.should.be.ok
+      xlsx.read(res.content).Sheets.Sheet1.A1000.should.be.ok
+    })
   })
 })
 

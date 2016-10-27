@@ -6,42 +6,91 @@ import uuid from 'uuid'
 import fallback from './fallback.js'
 import responseXlsx from './responseXlsx.js'
 import jsonToXml from './jsonToXml.js'
-import xml2js from 'xml2js'
+import stream from 'stream'
+import zlib from 'zlib'
+import merge from 'merge2'
+
+const stringToStream = (str) => {
+  var s = new stream.Readable()
+  s.push(str)
+  s.push(null)
+  return s
+}
 
 export default function (req, res) {
+  req.logger.debug('Parsing xlsx content')
   const contentString = res.content.toString()
-  let content
+  let $xlsxTemplate
+  let $files
   try {
-    content = JSON.parse(contentString)
+    let content = JSON.parse(contentString)
+    $xlsxTemplate = content.$xlsxTemplate
+    $files = content.$files
   } catch (e) {
     req.logger.warn('Unable to parse xlsx template JSON string (maybe you are missing {{{xlsxPrint}}} at the end?): \n' + contentString.substring(0, 100) + '... \n' + e.stack)
     return fallback(e, req, res)
   }
 
-  const files = []
-  Object.keys(content).forEach((k) => {
-    var buf = null
-    if (k.includes('.xml')) {
-      buf = new Buffer(jsonToXml(content[k]), 'utf8')
-    }
-
+  const files = Object.keys($xlsxTemplate).map((k) => {
     if (k.includes('xl/media/') || k.includes('.bin')) {
-      buf = new Buffer(content[k], 'base64')
+      return {
+        path: k,
+        data: new Buffer($xlsxTemplate[k], 'base64')
+      }
     }
 
-    if (!buf) {
-      buf = new Buffer(content[k], 'utf8')
+    if (k.includes('.xml')) {
+      const xmlAndFiles = jsonToXml($xlsxTemplate[k])
+      const fullXml = xmlAndFiles.xml
+
+      if (fullXml.indexOf('&&') < 0) {
+        return {
+          path: k,
+          data: new Buffer(fullXml, 'utf8')
+        }
+      }
+
+      const xmlStream = merge()
+
+      if (fullXml.indexOf('&&') < 0) {
+        return {
+          path: k,
+          data: new Buffer(fullXml, 'utf8')
+        }
+      }
+
+      let xml = fullXml
+
+      while (xml) {
+        const separatorIndex = xml.indexOf('&&')
+
+        if (separatorIndex < 0) {
+          xmlStream.add(stringToStream(xml))
+          xml = ''
+          continue
+        }
+
+        xmlStream.add(stringToStream(xml.substring(0, separatorIndex)))
+        xmlStream.add(fs.createReadStream($files[xmlAndFiles.files.shift()]).pipe(zlib.createInflate()))
+        xml = xml.substring(separatorIndex + '&&'.length)
+      }
+
+      return {
+        path: k,
+        data: xmlStream
+      }
     }
 
-    files.push({
+    return {
       path: k,
-      data: buf
-    })
+      data: new Buffer($xlsxTemplate[k], 'utf8')
+    }
   })
 
   return new Promise((resolve, reject) => {
     const id = uuid.v1()
     const xlsxFileName = path.join(req.reporter.options.tempDirectory, id + '.xlsx')
+    req.logger.debug('Zipping prepared xml files into ' + xlsxFileName)
     const archive = archiver('zip')
     const output = fs.createWriteStream(xlsxFileName)
 

@@ -101,6 +101,7 @@ module.exports = (reporter, definition) => {
       req.data.$xlsxModuleDirname = path.join(__dirname, '../')
       req.data.$tempDirectory = reporter.options.tempDirectory
       req.data.$addBufferSize = definition.options.addBufferSize || 50000000
+      req.data.$escapeAmp = definition.options.$escapeAmp
       req.data.$numberOfParsedAddIterations = definition.options.numberOfParsedAddIterations == null ? 50 : definition.options.numberOfParsedAddIterations
 
       return FS.readFileAsync(path.join(__dirname, '../', 'static', 'helpers.js'), 'utf8').then(

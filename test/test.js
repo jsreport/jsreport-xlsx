@@ -141,6 +141,20 @@ describe('excel recipe', () => {
       done()
     }).catch(done)
   })
+
+  it('should escape amps by default', (done) => {
+    reporter.render({
+      template: {
+        recipe: 'xlsx',
+        engine: 'handlebars',
+        content: fs.readFileSync(path.join(__dirname, 'content', 'add-row-with-foo-value.handlebars'), 'utf8').replace('{{foo}}', '& {{foo}} &amp;amp;')
+      },
+      data: { foo: '&' }
+    }).then((res) => {
+      xlsx.read(res.content).Sheets.Sheet1.A1.v.should.be.eql('& & &')
+      done()
+    }).catch(done)
+  })
 })
 
 describe('excel recipe with disabled add parsing', () => {

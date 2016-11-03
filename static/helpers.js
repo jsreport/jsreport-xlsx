@@ -106,7 +106,7 @@
   }
 
   function merge (filePath, path) {
-    var json = xml2jsonUnwrap(this.tagCtx.render(this.ctx.data))
+    var json = xml2jsonUnwrap(escape(this.tagCtx.render(this.ctx.data), this.ctx.root))
 
     var mergeTarget = new Function('obj', 'return obj.' + path)(this.ctx.root.$xlsxTemplate[filePath])
 
@@ -148,18 +148,28 @@
     }
   }
 
+  function escape (xml, root) {
+    if (root.$escapeAmp === false) {
+      return xml
+    }
+
+    return xml.replace(/&(?!amp;)/g, '&amp;amp;').replace(/&amp;(?!amp;)/g, '&amp;amp;')
+  }
+
   function add (filePath, xmlPath) {
     fsproxy = safeRequire(path.join(this.ctx.root.$xlsxModuleDirname, '/lib/fsproxy.js'))
 
     var obj = this.ctx.root.$xlsxTemplate[filePath]
     var collection = safeGet(obj, xmlPath)
 
+    var xml = escape(this.tagCtx.render(this.ctx.data).trim(), this.ctx.root)
+
     if (collection.length < this.ctx.root.$numberOfParsedAddIterations) {
-      collection.push(xml2jsonUnwrap(this.tagCtx.render(this.ctx.data).trim()))
+      collection.push(xml2jsonUnwrap(xml))
       return ''
     }
 
-    bufferedAppend(filePath, xmlPath, this.ctx.root, collection, this.tagCtx.render(this.ctx.data).trim())
+    bufferedAppend(filePath, xmlPath, this.ctx.root, collection, xml)
     return ''
   }
 

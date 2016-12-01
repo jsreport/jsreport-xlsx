@@ -121,7 +121,7 @@
   }
 
   function bufferedFlush (root) {
-    let buffers = root.$buffers || {}
+    var buffers = root.$buffers || {}
 
     Object.keys(buffers).forEach(function (f) {
       Object.keys(buffers[f]).forEach(function (k) {
@@ -136,7 +136,7 @@
 
   function bufferedAppend (file, xmlPath, root, collection, data) {
     root.$files = root.$files || []
-    let buffers = root.$buffers = root.$buffers || {}
+    var buffers = root.$buffers = root.$buffers || {}
     buffers[file] = buffers[file] || {}
 
     buffers[file][xmlPath] = buffers[file][xmlPath] || { collection: collection, data: '' }
@@ -303,7 +303,7 @@
     ensureRelOnSheet.call(this, sheetFullName)
     var drawingFullName = ensureDrawingOnSheet.call(this, sheetFullName)
 
-    const drawingRelPath = 'xl/drawings/_rels/' + drawingFullName + '.rels'
+    var drawingRelPath = 'xl/drawings/_rels/' + drawingFullName + '.rels'
     this.ctx.root.$xlsxTemplate[drawingRelPath] =
       this.ctx.root.$xlsxTemplate[drawingRelPath] || {
         Relationships: {
@@ -312,8 +312,8 @@
         }
       }
 
-    const relNumber = this.ctx.root.$xlsxTemplate[drawingRelPath].Relationships.Relationship.length + 1
-    const relName = 'rId' + relNumber
+    var relNumber = this.ctx.root.$xlsxTemplate[drawingRelPath].Relationships.Relationship.length + 1
+    var relName = 'rId' + relNumber
 
     if (!this.ctx.root.$xlsxTemplate[drawingRelPath].Relationships.Relationship.filter(function (r) { return r.$.Id === imageName }).length) {
       this.ctx.root.$xlsxTemplate[drawingRelPath].Relationships.Relationship.push({

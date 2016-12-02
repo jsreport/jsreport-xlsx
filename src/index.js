@@ -26,6 +26,7 @@ module.exports = (reporter, definition) => {
     reporter.options.tasks.allowedModules.push('lodash')
     reporter.options.tasks.allowedModules.push(path.join(__dirname, '../node_modules/lodash'))
     reporter.options.tasks.allowedModules.push('xml2js')
+    reporter.options.tasks.allowedModules.push(path.join(__dirname, '../node_modules/xml2js'))
     reporter.options.tasks.allowedModules.push(path.join(__dirname, '../lib/fsproxy.js'))
   }
 

@@ -153,7 +153,7 @@
       return xml
     }
 
-    return xml.replace(/&(?!amp;)/g, '&amp;amp;').replace(/&amp;(?!amp;)/g, '&amp;amp;')
+    return xml.replace(/&(?![amp;,lt;,gt;,quot;,#39;,#x2F;])/g, '&amp;amp;').replace(/&amp;(?!amp;)/g, '&amp;amp;')
   }
 
   function add (filePath, xmlPath) {

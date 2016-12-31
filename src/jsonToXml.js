@@ -9,6 +9,21 @@ const convertAttributes = (obj) => {
   return xml
 }
 
+var entityMap = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+  '/': '&#x2F;'
+}
+
+var convertEntities = (str) => {
+  return str.replace(/[<>&'"](?![amp;,lt;,gt;,quot;,#39;,#x2F;])/g, function (s) {
+    return entityMap[s]
+  })
+}
+
 module.exports = (o) => {
   let files = []
 
@@ -18,7 +33,7 @@ module.exports = (o) => {
     }
 
     if (typeof obj === 'string') {
-      return obj.toString()
+      return convertEntities(obj.toString())
     }
 
     var xml = ''

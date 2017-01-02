@@ -183,6 +183,20 @@ describe('excel recipe', () => {
       done()
     }).catch(done)
   })
+
+  it('should escape entities in attributes', (done) => {
+    reporter.render({
+      template: {
+        recipe: 'xlsx',
+        engine: 'handlebars',
+        content: fs.readFileSync(path.join(__dirname, 'content', 'rename-sheet.handlebars'), 'utf8')
+      },
+      data: { foo: '<' }
+    }).then((res) => {
+      xlsx.read(res.content).Sheets['&lt;XXX'].should.be.ok()
+      done()
+    }).catch(done)
+  })
 })
 
 describe('excel recipe with disabled add parsing', () => {

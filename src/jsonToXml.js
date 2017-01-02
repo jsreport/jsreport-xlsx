@@ -2,7 +2,7 @@ const convertAttributes = (obj) => {
   var xml = ''
   if (obj.$) {
     for (var attrKey in obj.$) {
-      xml += ` ${attrKey}="${obj.$[attrKey]}"`
+      xml += ` ${attrKey}="${convertEntities(obj.$[attrKey])}"`
     }
   }
 
@@ -19,7 +19,11 @@ var entityMap = {
 }
 
 var convertEntities = (str) => {
-  return str.replace(/[<>&'"](?![amp;,lt;,gt;,quot;,#39;,#x2F;])/g, function (s) {
+  if (!str) {
+    return str
+  }
+
+  return str.replace(/[<>&'"](?!(amp;|lt;|gt;|quot;|#39;|#x2F;))/g, function (s) {
     return entityMap[s]
   })
 }

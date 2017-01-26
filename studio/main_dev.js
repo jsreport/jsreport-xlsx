@@ -7,7 +7,8 @@ Studio.addEntitySet({
   name: 'xlsxTemplates',
   faIcon: 'fa-file-excel-o',
   visibleName: 'xlsx template',
-  onNew: XlsxUploadButton.OpenUpload
+  onNew: XlsxUploadButton.OpenUpload,
+  entityTreePosition: 500
 })
 Studio.addEditorComponent('xlsxTemplates', XlsxEditor)
 Studio.addToolbarComponent(XlsxUploadButton)

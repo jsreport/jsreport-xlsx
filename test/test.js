@@ -8,18 +8,16 @@ import _ from 'lodash'
 describe('excel recipe', () => {
   let reporter
 
-  beforeEach((done) => {
+  beforeEach(() => {
     reporter = new Reporter({
       rootDirectory: path.join(__dirname, '../')
     })
 
-    reporter.init().then(function () {
-      done()
-    }).fail(done)
+    return reporter.init()
   })
 
   const test = (contentName, assertion) => {
-    return (done) => {
+    return () => {
       reporter.render({
         template: {
           recipe: 'xlsx',
@@ -28,8 +26,7 @@ describe('excel recipe', () => {
         }
       }).then((res) => {
         assertion(xlsx.read(res.content))
-        done()
-      }).catch(done)
+      })
     }
   }
 
@@ -71,9 +68,9 @@ describe('excel recipe', () => {
     workbook.Sheets.Test.A1.should.be.ok
   }))
 
-  it('should be able to use uploaded xlsx template', (done) => {
+  it('should be able to use uploaded xlsx template', () => {
     let templateContent = fs.readFileSync(path.join(__dirname, 'Book1.xlsx')).toString('base64')
-    reporter.documentStore.collection('xlsxTemplates').insert({
+    return reporter.documentStore.collection('xlsxTemplates').insert({
       contentRaw: templateContent,
       shortid: 'foo',
       name: 'foo'
@@ -90,12 +87,11 @@ describe('excel recipe', () => {
       }).then((res) => {
         let workbook = xlsx.read(res.content)
         workbook.Sheets.Sheet1.A1.v.should.be.eql(1)
-        done()
       })
-    }).catch(done)
+    })
   })
 
-  it('should return iframe in preview', (done) => {
+  it('should return iframe in preview', () => {
     return reporter.render({
       options: {
         preview: true
@@ -107,11 +103,10 @@ describe('excel recipe', () => {
       }
     }).then((res) => {
       res.content.toString().should.containEql('iframe')
-      done()
-    }).catch(done)
+    })
   })
 
-  it('should disable preview if the options has previewInExcelOnline === false', (done) => {
+  it('should disable preview if the options has previewInExcelOnline === false', () => {
     reporter.options.xlsx = { previewInExcelOnline: false }
     return reporter.render({
       options: {
@@ -124,12 +119,11 @@ describe('excel recipe', () => {
       }
     }).then((res) => {
       res.content.toString().should.not.containEql('iframe')
-      done()
-    }).catch(done)
+    })
   })
 
-  it('should be able to use string helpers', (done) => {
-    reporter.render({
+  it('should be able to use string helpers', () => {
+    return reporter.render({
       template: {
         recipe: 'xlsx',
         engine: 'handlebars',
@@ -138,12 +132,11 @@ describe('excel recipe', () => {
       }
     }).then((res) => {
       xlsx.read(res.content).Sheets.Sheet1.A1.v.should.be.eql(11)
-      done()
-    }).catch(done)
+    })
   })
 
-  it('should escape amps by default', (done) => {
-    reporter.render({
+  it('should escape amps by default', () => {
+    return reporter.render({
       template: {
         recipe: 'xlsx',
         engine: 'handlebars',
@@ -152,12 +145,11 @@ describe('excel recipe', () => {
       data: { foo: '&' }
     }).then((res) => {
       xlsx.read(res.content).Sheets.Sheet1.A1.v.should.be.eql('& & &')
-      done()
-    }).catch(done)
+    })
   })
 
-  it('should pass escaped entities', (done) => {
-    reporter.render({
+  it('should pass escaped entities', () => {
+    return reporter.render({
       template: {
         recipe: 'xlsx',
         engine: 'handlebars',
@@ -166,12 +158,11 @@ describe('excel recipe', () => {
       data: { foo: '&lt;' }
     }).then((res) => {
       xlsx.read(res.content).Sheets.Sheet1.A1.v.should.be.eql('<')
-      done()
-    }).catch(done)
+    })
   })
 
-  it('should escape entities', (done) => {
-    reporter.render({
+  it('should escape entities', () => {
+    return reporter.render({
       template: {
         recipe: 'xlsx',
         engine: 'handlebars',
@@ -180,12 +171,11 @@ describe('excel recipe', () => {
       data: { foo: '<' }
     }).then((res) => {
       xlsx.read(res.content).Sheets.Sheet1.A1.v.should.be.eql('<')
-      done()
-    }).catch(done)
+    })
   })
 
-  it('should escape entities in attributes', (done) => {
-    reporter.render({
+  it('should escape entities in attributes', () => {
+    return reporter.render({
       template: {
         recipe: 'xlsx',
         engine: 'handlebars',
@@ -194,8 +184,7 @@ describe('excel recipe', () => {
       data: { foo: '<' }
     }).then((res) => {
       xlsx.read(res.content).Sheets['&lt;XXX'].should.be.ok()
-      done()
-    }).catch(done)
+    })
   })
 })
 
@@ -234,19 +223,17 @@ describe('excel recipe with disabled add parsing', () => {
 describe('excel recipe with in process helpers', () => {
   let reporter
 
-  beforeEach((done) => {
+  beforeEach(() => {
     reporter = new Reporter({
       rootDirectory: path.join(__dirname, '../'),
       tasks: { strategy: 'in-process' }
     })
 
-    reporter.init().then(function () {
-      done()
-    }).fail(done)
+    return reporter.init()
   })
 
-  it('should be able to use native helpers', (done) => {
-    reporter.render({
+  it('should be able to use native helpers', () => {
+    return reporter.render({
       template: {
         recipe: 'xlsx',
         engine: 'handlebars',
@@ -257,7 +244,6 @@ describe('excel recipe with in process helpers', () => {
       }
     }).then((res) => {
       xlsx.read(res.content).Sheets.Sheet1.A1.v.should.be.eql(11)
-      done()
-    }).catch(done)
+    })
   })
 })

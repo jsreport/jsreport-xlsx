@@ -5,6 +5,7 @@
 
 (function (global) {
   var path = require('path')
+  var fsproxy = this.fsproxy || require('fsproxy.js')
 
   function print () {
     ensureWorksheetOrder(this.ctx.root.$xlsxTemplate)
@@ -132,8 +133,6 @@
     })
   }
 
-  var fsproxy
-
   function bufferedAppend (file, xmlPath, root, collection, data) {
     root.$files = root.$files || []
     var buffers = root.$buffers = root.$buffers || {}
@@ -157,8 +156,6 @@
   }
 
   function add (filePath, xmlPath) {
-    fsproxy = safeRequire(path.join(this.ctx.root.$xlsxModuleDirname, '/lib/fsproxy.js'))
-
     var obj = this.ctx.root.$xlsxTemplate[filePath]
     var collection = safeGet(obj, xmlPath)
 
@@ -340,16 +337,8 @@
     ))
   }
 
-  function safeRequire (moduleName) {
-    try {
-      return require(moduleName)
-    } catch (e) {
-      return null
-    }
-  }
-
-  var _ = safeRequire('lodash') || safeRequire(path.join(m.data.$xlsxModuleDirname, '/node_modules/lodash'))
-  var xml2js = safeRequire('xml2js') || safeRequire(path.join(m.data.$xlsxModuleDirname, '/node_modules/xml2js'))
+  var _ = require('lodash')
+  var xml2js = require('xml2js')
 
   var xml2jsonUnwrap = function (xml) {
     var result = xml2json(xml)

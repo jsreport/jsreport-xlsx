@@ -5,6 +5,8 @@ import 'should'
 import fs from 'fs'
 import _ from 'lodash'
 
+process.env.DEBUG = ''
+
 describe('excel recipe', () => {
   let reporter
 

@@ -19,15 +19,28 @@ module.exports = (reporter, definition) => {
     execute: () => {}
   })
 
-  reporter.options.tasks = reporter.options.tasks || {}
-  reporter.options.tasks.allowedModules = reporter.options.tasks.allowedModules || []
+  if (reporter.compilation) {
+    reporter.compilation.resource('defaultXlsxTemplate.json', path.join(__dirname, '../static', 'defaultXlsxTemplate.json'))
+    reporter.compilation.resource('helpers.js', path.join(__dirname, '../static', 'helpers.js'))
+  }
+
+  reporter.options.tasks.modules.push({
+    alias: 'fsproxy.js',
+    path: path.join(__dirname, '../lib/fsproxy.js')
+  })
+
+  reporter.options.tasks.modules.push({
+    alias: 'lodash',
+    path: require.resolve('lodash')
+  })
+
+  reporter.options.tasks.modules.push({
+    alias: 'xml2js',
+    path: require.resolve('xml2js')
+  })
+
   if (reporter.options.tasks.allowedModules !== '*') {
     reporter.options.tasks.allowedModules.push('path')
-    reporter.options.tasks.allowedModules.push('lodash')
-    reporter.options.tasks.allowedModules.push(path.join(__dirname, '../node_modules/lodash'))
-    reporter.options.tasks.allowedModules.push('xml2js')
-    reporter.options.tasks.allowedModules.push(path.join(__dirname, '../node_modules/xml2js'))
-    reporter.options.tasks.allowedModules.push(path.join(__dirname, '../lib/fsproxy.js'))
   }
 
   reporter.documentStore.registerEntityType('XlsxTemplateType', {
@@ -81,7 +94,11 @@ module.exports = (reporter, definition) => {
     const findTemplate = () => {
       if (!req.template.xlsxTemplate || !req.template.xlsxTemplate.shortid) {
         if (defaultXlsxTemplate) {
-          return defaultXlsxTemplate
+          return Promise.resolve(defaultXlsxTemplate)
+        }
+
+        if (reporter.execution) {
+          return Promise.resolve(JSON.parse(reporter.execution.resource('defaultXlsxTemplate.json').toString()))
         }
 
         return FS.readFileAsync(path.join(__dirname, '../static', 'defaultXlsxTemplate.json')).then((content) => JSON.parse(content))
@@ -105,10 +122,14 @@ module.exports = (reporter, definition) => {
       req.data.$escapeAmp = definition.options.escapeAmp
       req.data.$numberOfParsedAddIterations = definition.options.numberOfParsedAddIterations == null ? 50 : definition.options.numberOfParsedAddIterations
 
-      return FS.readFileAsync(path.join(__dirname, '../', 'static', 'helpers.js'), 'utf8').then(
+      return (reporter.execution ? Promise.resolve(reporter.execution.resource('helpers.js')) : FS.readFileAsync(path.join(__dirname, '../', 'static', 'helpers.js'), 'utf8')).then(
         (content) => {
           if (req.template.helpers && typeof req.template.helpers === 'object') {
+            // this is the case when the jsreport is used with in-process strategy
+            // and additinal helpers are passed as object
+            // in this case we need to merge in xlsx helpers
             req.template.helpers.require = require
+            req.template.helpers.fsproxy = require(path.join(__dirname, 'fsproxy.js'))
             return vm.runInNewContext(content, req.template.helpers)
           }
 

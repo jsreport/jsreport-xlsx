@@ -5,6 +5,8 @@ import 'should'
 import fs from 'fs'
 import _ from 'lodash'
 
+process.env.DEBUG = ''
+
 describe('excel recipe', () => {
   let reporter
 
@@ -153,11 +155,11 @@ describe('excel recipe', () => {
       template: {
         recipe: 'xlsx',
         engine: 'handlebars',
-        content: fs.readFileSync(path.join(__dirname, 'content', 'add-row-with-foo-value.handlebars'), 'utf8').replace('{{foo}}', '{{{foo}}}')
+        content: fs.readFileSync(path.join(__dirname, 'content', 'add-row-with-foo-value.handlebars'), 'utf8').replace('{{foo}}', '{{{foo}}} > " ' + '"' + ' /')
       },
       data: { foo: '&lt;' }
     }).then((res) => {
-      xlsx.read(res.content).Sheets.Sheet1.A1.v.should.be.eql('<')
+      xlsx.read(res.content).Sheets.Sheet1.A1.v.should.be.eql('< > " ' + '"' + ' /')
     })
   })
 
@@ -216,6 +218,32 @@ describe('excel recipe with disabled add parsing', () => {
     }).then((res) => {
       xlsx.read(res.content).Sheets.Sheet1.A1.should.be.ok
       xlsx.read(res.content).Sheets.Sheet1.A1000.should.be.ok
+    })
+  })
+
+  it('should escape amps', () => {
+    return reporter.render({
+      template: {
+        recipe: 'xlsx',
+        engine: 'handlebars',
+        content: fs.readFileSync(path.join(__dirname, 'content', 'add-row-with-foo-value.handlebars'), 'utf8').replace('{{foo}}', '& {{foo}} &amp;')
+      },
+      data: { foo: '&' }
+    }).then((res) => {
+      xlsx.read(res.content).Sheets.Sheet1.A1.v.should.be.eql('& & &')
+    })
+  })
+
+  it('should escape entities', () => {
+    return reporter.render({
+      template: {
+        recipe: 'xlsx',
+        engine: 'handlebars',
+        content: fs.readFileSync(path.join(__dirname, 'content', 'add-row-with-foo-value.handlebars'), 'utf8').replace('{{foo}}', '& < > " ' + "'" + ' /')
+      },
+      data: { }
+    }).then((res) => {
+      xlsx.read(res.content).Sheets.Sheet1.A1.v.should.be.eql('& < > " ' + "'" + ' /')
     })
   })
 })

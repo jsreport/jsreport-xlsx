@@ -7,13 +7,9 @@
 
 See the docs https://jsreport.net/learn/xlsx
 
-<iframe src='https://playground.jsreport.net/studio/workspace/rJftqRaQ/10?embed=1' width="100%" height="400" frameborder="0"></iframe>
-
 ## Installation
 
 >npm install jsreport-xlsx
-
-
 
 ## jsreport-core
 

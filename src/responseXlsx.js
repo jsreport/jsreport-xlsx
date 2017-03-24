@@ -30,7 +30,7 @@ export default function responseXlsx (request, response) {
     return preview(request, response, options)
   }
 
-  response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheetf'
+  response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
   response.headers['Content-Disposition'] = 'inline; filename="report.xlsx"'
   response.headers['File-Extension'] = 'xlsx'
 

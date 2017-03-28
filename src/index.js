@@ -61,13 +61,13 @@ module.exports = (reporter, definition) => {
     'shortid': { type: 'Edm.String' }
   })
 
+  if (!reporter.documentStore.model.entityTypes['TemplateType']) {
+    throw new Error('xlsx recipe depends on jsreport-templates ')
+  }
+
+  reporter.documentStore.model.entityTypes['TemplateType'].xlsxTemplate = { type: 'Collection(jsreport.XlsxTemplateRefType)' }
+
   reporter.initializeListeners.add('xlsxTemplates', () => {
-    if (!reporter.documentStore.model.entityTypes['TemplateType']) {
-      throw new Error('xlsx recipe depends on jsreport-templates ')
-    }
-
-    reporter.documentStore.model.entityTypes['TemplateType'].xlsxTemplate = { type: 'Collection(jsreport.XlsxTemplateRefType)' }
-
     reporter.documentStore.collection('xlsxTemplates').beforeInsertListeners.add('xlsxTemplates', function (doc) {
       doc.shortid = doc.shortid || shortid.generate()
       return serialize(doc.contentRaw, reporter.options.tempDirectory).then((serialized) => (doc.content = serialized))

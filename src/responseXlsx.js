@@ -9,8 +9,11 @@ const preview = (request, response, options) => {
       if (err) {
         return reject(err)
       }
-      response.content = new Buffer('<iframe style="height:100%;width:100%" src="https://view.officeapps.live.com/op/view.aspx?src=' +
-        encodeURIComponent((options.publicUriForPreview || 'http://jsreport.net/temp') + '/' + body) + '" />')
+      var iframe = '<iframe style="height:100%;width:100%" src="https://view.officeapps.live.com/op/view.aspx?src=' +
+        encodeURIComponent((options.publicUriForPreview || 'http://jsreport.net/temp') + '/' + body) + '" />'
+      var title = request.template.name || 'jsreport'
+      var html = '<html><head><title>' + title + '</title><body>' + iframe + '</body></html>'
+      response.content = new Buffer(html)
       response.headers['Content-Type'] = 'text/html'
       // sometimes files is not completely flushed and excel online cannot find it immediately
       setTimeout(function () {

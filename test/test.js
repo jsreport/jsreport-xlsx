@@ -131,6 +131,22 @@ describe('excel recipe', () => {
     })
   })
 
+  it('should return iframe in preview with title including template name', () => {
+    return reporter.documentStore.collection('templates').insert({name: 'foo'}).then(() => reporter.render({
+      options: {
+        preview: true
+      },
+      template: {
+        name: 'foo',
+        recipe: 'xlsx',
+        engine: 'handlebars',
+        content: '{{{xlsxPrint}}}'
+      }
+    }).then((res) => {
+      res.content.toString().should.containEql('<title>foo</title>')
+    }))
+  })
+
   it('should disable preview if the options has previewInExcelOnline === false', () => {
     reporter.options.xlsx = { previewInExcelOnline: false }
     return reporter.render({

@@ -1,7 +1,7 @@
 import Reporter from 'jsreport-core'
 import path from 'path'
 import xlsx from 'xlsx'
-import 'should'
+import should from 'should'
 import fs from 'fs'
 import _ from 'lodash'
 
@@ -19,17 +19,15 @@ describe('excel recipe', () => {
   })
 
   const test = (contentName, assertion) => {
-    return () => {
-      reporter.render({
-        template: {
-          recipe: 'xlsx',
-          engine: 'handlebars',
-          content: fs.readFileSync(path.join(__dirname, 'content', contentName), 'utf8')
-        }
-      }).then((res) => {
-        assertion(xlsx.read(res.content))
-      })
-    }
+    return () => reporter.render({
+      template: {
+        recipe: 'xlsx',
+        engine: 'handlebars',
+        content: fs.readFileSync(path.join(__dirname, 'content', contentName), 'utf8')
+      }
+    }).then((res) => {
+      assertion(xlsx.read(res.content))
+    })
   }
 
   it('should generate empty excel by default', test('empty.handlebars', (workbook) => {
@@ -42,8 +40,33 @@ describe('excel recipe', () => {
     workbook.SheetNames[0].should.be.eql('XXX')
   }))
 
+  it('xlsxMerge rename-sheet-complex-path', test('rename-sheet-complex-path.handlebars', (workbook) => {
+    workbook.SheetNames.should.have.length(1)
+    workbook.SheetNames[0].should.be.eql('XXX')
+  }))
+
   it('xlsxAdd add-row', test('add-row.handlebars', (workbook) => {
-    workbook.Sheets.Sheet1.A1.should.be.ok
+    workbook.Sheets.Sheet1.A1.should.be.ok()
+  }))
+
+  it('xlsxAdd add-row-complex-path', test('add-row-complex-path.handlebars', (workbook) => {
+    workbook.Sheets.Sheet1.A1.should.be.ok()
+  }))
+
+  it('xlsxRemove remove-row', test('remove-row.handlebars', (workbook) => {
+    should(workbook.Sheets.Sheet1.A1).not.be.ok()
+  }))
+
+  it('xlsxRemove remove-row-complex-path', test('remove-row-complex-path.handlebars', (workbook) => {
+    should(workbook.Sheets.Sheet1.A1).not.be.ok()
+  }))
+
+  it('xlsxReplace replace-row', test('replace-row.handlebars', (workbook) => {
+    workbook.Sheets.Sheet1.A1.v.should.be.eql('xxx')
+  }))
+
+  it('xlsxReplace replace-row-complex-path', test('replace-row-complex-path.handlebars', (workbook) => {
+    workbook.Sheets.Sheet1.A1.v.should.be.eql('xxx')
   }))
 
   it('xlsxAdd add many row', () => {
@@ -57,17 +80,17 @@ describe('excel recipe', () => {
         numbers: _.range(0, 1000)
       }
     }).then((res) => {
-      xlsx.read(res.content).Sheets.Sheet1.A1.should.be.ok
-      xlsx.read(res.content).Sheets.Sheet1.A1000.should.be.ok
+      xlsx.read(res.content).Sheets.Sheet1.A1.should.be.ok()
+      xlsx.read(res.content).Sheets.Sheet1.A1000.should.be.ok()
     })
   })
 
   it('xlsxReplace replace-sheet', test('replace-sheet.handlebars', (workbook) => {
-    workbook.Sheets.Sheet1.A1.should.be.ok
+    workbook.Sheets.Sheet1.A1.should.be.ok()
   }))
 
   it('add-sheet', test('add-sheet.handlebars', (workbook) => {
-    workbook.Sheets.Test.A1.should.be.ok
+    workbook.Sheets.Test.A1.should.be.ok()
   }))
 
   it('should be able to use uploaded xlsx template', () => {
@@ -216,8 +239,8 @@ describe('excel recipe with disabled add parsing', () => {
         numbers: _.range(0, 1000)
       }
     }).then((res) => {
-      xlsx.read(res.content).Sheets.Sheet1.A1.should.be.ok
-      xlsx.read(res.content).Sheets.Sheet1.A1000.should.be.ok
+      xlsx.read(res.content).Sheets.Sheet1.A1.should.be.ok()
+      xlsx.read(res.content).Sheets.Sheet1.A1000.should.be.ok()
     })
   })
 

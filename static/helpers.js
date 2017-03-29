@@ -2,7 +2,6 @@
 /* eslint no-new-func: 0 */
 /* *global __rootDirectory */
 /* global m */
-
 (function (global) {
   var path = require('path')
   var fsproxy = this.fsproxy || require('fsproxy.js')
@@ -79,18 +78,36 @@
     }
   }
 
+  // get the value of object on js based path
+  // supports simple paths as worksheet.rows[0]
+  // and also paths with array accessor like ['chart:c].plot
+  function evalGet (obj, path) {
+    var fn = 'return obj' + (path[0] !== '[' ? '.' : '') + path
+
+    return new Function('obj', fn)(obj)
+  }
+
+  function evalSet (obj, path, val) {
+    var fn = 'obj' + (path[0] !== '[' ? '.' : '') + path + '= val'
+
+    return new Function('obj', 'val', fn)(obj, val)
+  }
+
   function replace (filePath, path) {
     if (typeof path === 'string') {
-      var holder = new Function('obj', 'return obj.' + path.split('.').slice(0, -1).join('.'))(this.ctx.root.$xlsxTemplate[filePath])
-      var pathFragmentToBeReplaced = path.split('.')[path.split('.').length - 1]
-      this.$replacedValue = new Function('obj', 'return obj.' + pathFragmentToBeReplaced)(holder)
+      var lastFragmentIndex = Math.max(path.lastIndexOf('.'), path.lastIndexOf('['))
+      var pathWithoutLastFragemnt = path.substring(0, lastFragmentIndex)
+      var pathOfLastFragment = path.substring(lastFragmentIndex)
+      var holder = evalGet(this.ctx.root.$xlsxTemplate[filePath], pathWithoutLastFragemnt)
+      this.$replacedValue = evalGet(holder, pathOfLastFragment)
       var contentToReplace = this.tagCtx.render(this.ctx.data)
       try {
         contentToReplace = xml2jsonUnwrap(contentToReplace)
       } catch (e) {
         // not xml, it is ok, put it as the string value inside
       }
-      new Function('obj', 'contentToReplace', 'return obj.' + pathFragmentToBeReplaced + ' = contentToReplace')(holder, contentToReplace)
+
+      evalSet(holder, pathOfLastFragment, contentToReplace)
     } else {
       this.ctx.root.$xlsxTemplate[filePath] = xml2json(this.tagCtx.render(this.ctx.data))
     }
@@ -100,7 +117,7 @@
 
   function remove (filePath, path, index) {
     var obj = this.ctx.root.$xlsxTemplate[filePath]
-    var collection = new Function('obj', 'return obj.' + path)(obj)
+    var collection = evalGet(obj, path)
     this.ctx.root.$removedItem = collection[index]
     collection.splice(index, 1)
     return ''
@@ -109,7 +126,7 @@
   function merge (filePath, path) {
     var json = xml2jsonUnwrap(escape(this.tagCtx.render(this.ctx.data), this.ctx.root))
 
-    var mergeTarget = new Function('obj', 'return obj.' + path)(this.ctx.root.$xlsxTemplate[filePath])
+    var mergeTarget = evalGet(this.ctx.root.$xlsxTemplate[filePath], path)
 
     _.merge(mergeTarget, json)
     return ''
@@ -176,17 +193,21 @@
    * empty array or object to be compatible with xml -> json represantation
    */
   function safeGet (obj, path) {
-    var originalObj = obj
-    var paths = path.replace('[', '.').replace(']', '').split('.')
+    // split ['c:chart'].row[0] into ['c:chart', 'row', 0]
+    var paths = path.replace(/\[/g, '.').replace(/\]/g, '').replace(/'/g, '').split('.')
 
-    var previous = {}
     for (var i = 0; i < paths.length; i++) {
+      if (paths[i] === '') {
+        // the first can be empty string if the path starts with ['chart:c']
+        continue
+      }
+
       var objReference = 'obj["' + paths[i] + '"]'
-      // if the next accessor is to array, we initialize missing parths as array, otherwise as object
+      // the last must be always array, also if accessor is number, we want to initialize as array
       var emptySafe = ((i === paths.length - 1) || !isNaN(paths[i + 1])) ? '[]' : '{}'
       new Function('obj', objReference + ' = ' + objReference + ' || ' + emptySafe)(obj)
+
       obj = new Function('obj', 'return ' + objReference)(obj)
-      previous = obj
     }
 
     return obj

@@ -82,13 +82,12 @@
   // supports simple paths as worksheet.rows[0]
   // and also paths with array accessor like ['chart:c].plot
   function evalGet (obj, path) {
-    var fn = 'return obj' + (path[0] !== '[' ? '.' : '') + path
-
+    var fn = 'return obj' + (path[0] !== '[' && path[0] !== '.' ? '.' : '') + path
     return new Function('obj', fn)(obj)
   }
 
   function evalSet (obj, path, val) {
-    var fn = 'obj' + (path[0] !== '[' ? '.' : '') + path + '= val'
+    var fn = 'obj' + (path[0] !== '[' && path[0] !== '.' ? '.' : '') + path + '= val'
 
     return new Function('obj', 'val', fn)(obj, val)
   }

@@ -69,6 +69,10 @@ describe('excel recipe', () => {
     workbook.Sheets.Sheet1.A1.v.should.be.eql('xxx')
   }))
 
+  it('xlsxReplace merge-cells', test('merge-cells.handlebars', (workbook) => {
+    workbook.Sheets.Sheet1.A1.should.be.ok()
+  }))
+
   it('xlsxAdd add many row', () => {
     return reporter.render({
       template: {

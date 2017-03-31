@@ -1,9 +1,9 @@
 language: node_js
 
 node_js:
+  - "4"
   - "4.0"
   - "7.0"
-  - "0.10.48"
 
 before_install:
-  - if [[ `node -v` == v0.10* ]]; then npm i -g npm@2; fi
+  - if [[ `node -v` == v4.0* ]]; then npm i -g npm@2; fi

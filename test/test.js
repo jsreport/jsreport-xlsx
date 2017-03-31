@@ -4,6 +4,7 @@ import xlsx from 'xlsx'
 import should from 'should'
 import fs from 'fs'
 import _ from 'lodash'
+import jsreportConfig from '../jsreport.config'
 
 process.env.DEBUG = ''
 
@@ -29,6 +30,18 @@ describe('excel recipe', () => {
       assertion(xlsx.read(res.content))
     })
   }
+
+  it('should be loaded as extension correctly', function () {
+    var extensionExists = function (extension) {
+      return extension.name === jsreportConfig.name
+    }
+
+    var foundInAvailableExtensions = reporter.extensionsManager.availableExtensions.some(extensionExists)
+    var foundInLoadedExtensions = reporter.extensionsManager.extensions.some(extensionExists)
+
+    foundInAvailableExtensions.should.be.True()
+    foundInLoadedExtensions.should.be.True()
+  })
 
   it('should generate empty excel by default', test('empty.handlebars', (workbook) => {
     workbook.SheetNames.should.have.length(1)

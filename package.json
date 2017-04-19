@@ -35,7 +35,6 @@
     "bluebird": "3.5.0",
     "file-type": "3.9.0",
     "get-stream": "3.0.0",
-    "in-publish": "2.0.0",
     "lodash": "4.17.4",
     "merge2": "1.0.3",
     "msexcel-builder-extended": "0.0.7",

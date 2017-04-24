@@ -19,6 +19,10 @@ Studio.previewListeners.push((request, entities) => {
     return
   }
 
+  if (Studio.extensions.xlsx.options.previewInExcelOnline === false) {
+    return
+  }
+
   if (Studio.getSettingValueByKey('xlsx-preview-informed', false) === true) {
     return
   }

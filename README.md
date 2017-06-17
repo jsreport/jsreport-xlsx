@@ -14,7 +14,20 @@ See the docs https://jsreport.net/learn/xlsx
 ## jsreport-core
 
 ```js
+var fs = require('fs')
 var jsreport = require('jsreport-core')()
 jsreport.use(require('jsreport-xlsx')())
+jsreport.use(require('jsreport-handlebars')())
 
+await jsreport.init()
+var report = jsreport.render({
+  template: {
+    recipe: 'xlsx',
+    engine: 'handlebars',
+    content: '{{{xlsxPrint}}}',
+    xlsxTemplate: {
+		content: fs.readFileSync('Book1.xlsx').toString('base64')
+    }
+  }
+})
 ```

@@ -133,6 +133,24 @@ describe('excel recipe', () => {
     })
   })
 
+  it('should be able to use xlsx template content from request', () => {
+    let templateContent = fs.readFileSync(path.join(__dirname, 'Book1.xlsx')).toString('base64')
+
+    return reporter.render({
+      template: {
+        recipe: 'xlsx',
+        engine: 'handlebars',
+        xlsxTemplate: {
+          content: templateContent
+        },
+        content: '{{{xlsxPrint}}}'
+      }
+    }).then((res) => {
+      let workbook = xlsx.read(res.content)
+      workbook.Sheets.Sheet1.A1.v.should.be.eql(1)
+    })
+  })
+
   it('should return iframe in preview', () => {
     return reporter.render({
       options: {

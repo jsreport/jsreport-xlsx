@@ -92,7 +92,7 @@ module.exports = (reporter, definition) => {
     }
 
     const findTemplate = () => {
-      if (!req.template.xlsxTemplate || !req.template.xlsxTemplate.shortid) {
+      if (!req.template.xlsxTemplate || (!req.template.xlsxTemplate.shortid && !req.template.xlsxTemplate.content)) {
         if (defaultXlsxTemplate) {
           return Promise.resolve(defaultXlsxTemplate)
         }
@@ -102,6 +102,10 @@ module.exports = (reporter, definition) => {
         }
 
         return FS.readFileAsync(path.join(__dirname, '../static', 'defaultXlsxTemplate.json')).then((content) => JSON.parse(content))
+      }
+
+      if (req.template.xlsxTemplate.content) {
+        return serialize(req.template.xlsxTemplate.content, reporter.options.tempDirectory).then((serialized) => JSON.parse(serialized))
       }
 
       return reporter.documentStore.collection('xlsxTemplates').find({ shortid: req.template.xlsxTemplate.shortid }, req).then((docs) => {

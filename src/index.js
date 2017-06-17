@@ -61,11 +61,9 @@ module.exports = (reporter, definition) => {
     'shortid': { type: 'Edm.String' }
   })
 
-  if (!reporter.documentStore.model.entityTypes['TemplateType']) {
-    throw new Error('xlsx recipe depends on jsreport-templates ')
+  if (reporter.documentStore.model.entityTypes['TemplateType']) {
+    reporter.documentStore.model.entityTypes['TemplateType'].xlsxTemplate = { type: 'Collection(jsreport.XlsxTemplateRefType)' }
   }
-
-  reporter.documentStore.model.entityTypes['TemplateType'].xlsxTemplate = { type: 'Collection(jsreport.XlsxTemplateRefType)' }
 
   reporter.initializeListeners.add('xlsxTemplates', () => {
     reporter.documentStore.collection('xlsxTemplates').beforeInsertListeners.add('xlsxTemplates', function (doc) {

@@ -263,7 +263,7 @@ describe('excel recipe', () => {
       },
       data: { foo: '<' }
     }).then((res) => {
-      xlsx.read(res.content).Sheets['&lt;XXX'].should.be.ok()
+      xlsx.read(res.content).Sheets['<XXX'].should.be.ok()
     })
   })
 })

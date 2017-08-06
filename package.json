@@ -58,6 +58,7 @@
     "eslint-config-standard-jsx": "3.3.0",
     "eslint-plugin-babel": "4.1.1",
     "in-publish": "2.0.0",
+    "jsreport-assets": "0.6.6",
     "jsreport-core": "1.3.0",
     "jsreport-handlebars": "1.1.2",
     "jsreport-studio-dev": "1.1.0",

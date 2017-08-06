@@ -5,6 +5,10 @@ import should from 'should'
 import fs from 'fs'
 import _ from 'lodash'
 import jsreportConfig from '../jsreport.config'
+import assets from 'jsreport-assets'
+import templates from 'jsreport-templates'
+import handlebars from 'jsreport-handlebars'
+import xlsxRecipe from '../index'
 
 process.env.DEBUG = ''
 
@@ -346,6 +350,34 @@ describe('excel recipe with in process helpers', () => {
       }
     }).then((res) => {
       xlsx.read(res.content).Sheets.Sheet1.A1.v.should.be.eql(11)
+    })
+  })
+})
+
+// https://github.com/jsreport/jsreport/issues/312
+describe('excel recipe should not be broken by assets running after', () => {
+  let reporter
+
+  beforeEach(() => {
+    reporter = new Reporter()
+
+    reporter.use(templates())
+    reporter.use(handlebars())
+    reporter.use(xlsxRecipe())
+    reporter.use(assets())
+
+    return reporter.init()
+  })
+
+  it('should be able to use native helpers', () => {
+    return reporter.render({
+      template: {
+        recipe: 'xlsx',
+        engine: 'handlebars',
+        content: fs.readFileSync(path.join(__dirname, 'content', 'empty.handlebars'), 'utf8')
+      }
+    }).then((res) => {
+      xlsx.read(res.content).SheetNames[0].should.be.eql('Sheet1')
     })
   })
 })

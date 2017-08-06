@@ -16,7 +16,7 @@ module.exports = (reporter, definition) => {
 
   reporter.extensionsManager.recipes.push({
     name: 'xlsx',
-    execute: () => {}
+    execute: recipe
   })
 
   if (reporter.compilation) {
@@ -76,12 +76,6 @@ module.exports = (reporter, definition) => {
         return serialize(update.$set.contentRaw, reporter.options.tempDirectory).then((serialized) => (update.$set.content = serialized))
       }
     })
-  })
-
-  reporter.afterTemplatingEnginesExecutedListeners.add('xlsxTemplates', (req, res) => {
-    if (req.template.recipe === 'xlsx') {
-      return recipe(req, res)
-    }
   })
 
   reporter.beforeRenderListeners.insert({ after: 'data' }, 'xlsxTemplates', (req) => {

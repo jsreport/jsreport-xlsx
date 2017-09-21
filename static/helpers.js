@@ -169,7 +169,7 @@
     }
 
     // we escape &, it was probably bad idea and it should be done by handlebars instead
-    return xml.replace(/&(?!(amp;|lt;|gt;|quot;|#39;|#x2F;))/g, '&amp;')
+    return xml.replace(/&(?!(amp;|lt;|gt;|quot;|#39;|#x2F;|#x3D;))/g, '&amp;')
   }
 
   function add (filePath, xmlPath) {

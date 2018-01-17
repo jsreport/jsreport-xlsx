@@ -14,7 +14,7 @@ var entityMap = {
   '<': '&lt;',
   '>': '&gt;',
   '"': '&quot;',
-  "'": '&#39;',
+  "'": '&#x27;',
   '/': '&#x2F;',
   '=': '&#x3D;'
 }
@@ -24,7 +24,7 @@ var convertEntities = (str) => {
     return str
   }
 
-  return str.replace(/[<>&'"](?!(amp;|lt;|gt;|quot;|#39;|#x2F;|#x3D;))/g, function (s) {
+  return str.replace(/[<>&'"](?!(amp;|lt;|gt;|quot;|#x27;|#x2F;|#x3D;))/g, function (s) {
     console.log('escape ' + s)
     return entityMap[s]
   })

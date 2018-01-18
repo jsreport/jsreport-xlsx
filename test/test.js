@@ -312,6 +312,19 @@ describe('excel recipe with disabled add parsing', () => {
     })
   })
 
+  it('should escape \'', () => {
+    return reporter.render({
+      template: {
+        recipe: 'xlsx',
+        engine: 'handlebars',
+        content: fs.readFileSync(path.join(__dirname, 'content', 'add-row-with-foo-value.handlebars'), 'utf8')
+      },
+      data: { foo: 'JOHN\'S PET PRODUCTS' }
+    }).then((res) => {
+      xlsx.read(res.content).Sheets.Sheet1.A1.v.should.be.eql('JOHN\'S PET PRODUCTS')
+    })
+  })
+
   it('should escape entities', () => {
     return reporter.render({
       template: {

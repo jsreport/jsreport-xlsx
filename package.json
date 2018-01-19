@@ -1,6 +1,6 @@
 {
   "name": "jsreport-xlsx",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "jsreport recipe rendering excels directly from open xml",
   "repository": {
     "type": "git",

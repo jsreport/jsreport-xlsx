@@ -1,14 +1,14 @@
-import Reporter from 'jsreport-core'
-import path from 'path'
-import xlsx from 'xlsx'
-import should from 'should'
-import fs from 'fs'
-import _ from 'lodash'
-import jsreportConfig from '../jsreport.config'
-import assets from 'jsreport-assets'
-import templates from 'jsreport-templates'
-import handlebars from 'jsreport-handlebars'
-import xlsxRecipe from '../index'
+const jsreport = require('jsreport-core')
+const path = require('path')
+const xlsx = require('xlsx')
+const should = require('should')
+const fs = require('fs')
+const _ = require('lodash')
+const jsreportConfig = require('../jsreport.config')
+const assets = require('jsreport-assets')
+const templates = require('jsreport-templates')
+const handlebars = require('jsreport-handlebars')
+const xlsxRecipe = require('../index')
 
 process.env.DEBUG = ''
 
@@ -16,8 +16,9 @@ describe('excel recipe', () => {
   let reporter
 
   beforeEach(() => {
-    reporter = new Reporter({
-      rootDirectory: path.join(__dirname, '../')
+    reporter = jsreport({
+      rootDirectory: path.join(__dirname, '../'),
+      tasks: { strategy: 'in-process' }
     })
 
     return reporter.init()
@@ -35,13 +36,11 @@ describe('excel recipe', () => {
     })
   }
 
-  it('should be loaded as extension correctly', function () {
-    var extensionExists = function (extension) {
-      return extension.name === jsreportConfig.name
-    }
+  it('should be loaded as extension correctly', () => {
+    const extensionExists = (extension) => extension.name === jsreportConfig.name
 
-    var foundInAvailableExtensions = reporter.extensionsManager.availableExtensions.some(extensionExists)
-    var foundInLoadedExtensions = reporter.extensionsManager.extensions.some(extensionExists)
+    const foundInAvailableExtensions = reporter.extensionsManager.availableExtensions.some(extensionExists)
+    const foundInLoadedExtensions = reporter.extensionsManager.extensions.some(extensionExists)
 
     foundInAvailableExtensions.should.be.True()
     foundInLoadedExtensions.should.be.True()
@@ -90,8 +89,8 @@ describe('excel recipe', () => {
     workbook.Sheets.Sheet1.A1.should.be.ok()
   }))
 
-  it('xlsxAdd add many row', () => {
-    return reporter.render({
+  it('xlsxAdd add many row', async () => {
+    const res = await reporter.render({
       template: {
         recipe: 'xlsx',
         engine: 'handlebars',
@@ -100,10 +99,9 @@ describe('excel recipe', () => {
       data: {
         numbers: _.range(0, 1000)
       }
-    }).then((res) => {
-      xlsx.read(res.content).Sheets.Sheet1.A1.should.be.ok()
-      xlsx.read(res.content).Sheets.Sheet1.A1000.should.be.ok()
     })
+    xlsx.read(res.content).Sheets.Sheet1.A1.should.be.ok()
+    xlsx.read(res.content).Sheets.Sheet1.A1000.should.be.ok()
   })
 
   it('xlsxReplace replace-sheet', test('replace-sheet.handlebars', (workbook) => {
@@ -114,33 +112,32 @@ describe('excel recipe', () => {
     workbook.Sheets.Test.A1.should.be.ok()
   }))
 
-  it('should be able to use uploaded xlsx template', () => {
+  it('should be able to use uploaded xlsx template', async () => {
     let templateContent = fs.readFileSync(path.join(__dirname, 'Book1.xlsx')).toString('base64')
-    return reporter.documentStore.collection('xlsxTemplates').insert({
+    await reporter.documentStore.collection('xlsxTemplates').insert({
       contentRaw: templateContent,
       shortid: 'foo',
       name: 'foo'
-    }).then(() => {
-      return reporter.render({
-        template: {
-          recipe: 'xlsx',
-          engine: 'handlebars',
-          xlsxTemplate: {
-            shortid: 'foo'
-          },
-          content: '{{{xlsxPrint}}}'
-        }
-      }).then((res) => {
-        let workbook = xlsx.read(res.content)
-        workbook.Sheets.Sheet1.A1.v.should.be.eql(1)
-      })
     })
+
+    const res = await reporter.render({
+      template: {
+        recipe: 'xlsx',
+        engine: 'handlebars',
+        xlsxTemplate: {
+          shortid: 'foo'
+        },
+        content: '{{{xlsxPrint}}}'
+      }
+    })
+    let workbook = xlsx.read(res.content)
+    workbook.Sheets.Sheet1.A1.v.should.be.eql(1)
   })
 
-  it('should be able to use xlsx template content from request', () => {
+  it('should be able to use xlsx template content from request', async () => {
     let templateContent = fs.readFileSync(path.join(__dirname, 'Book1.xlsx')).toString('base64')
 
-    return reporter.render({
+    const res = await reporter.render({
       template: {
         recipe: 'xlsx',
         engine: 'handlebars',
@@ -149,14 +146,14 @@ describe('excel recipe', () => {
         },
         content: '{{{xlsxPrint}}}'
       }
-    }).then((res) => {
-      let workbook = xlsx.read(res.content)
-      workbook.Sheets.Sheet1.A1.v.should.be.eql(1)
     })
+
+    let workbook = xlsx.read(res.content)
+    workbook.Sheets.Sheet1.A1.v.should.be.eql(1)
   })
 
-  it('should return iframe in preview', () => {
-    return reporter.render({
+  it('should return iframe in preview', async () => {
+    const res = await reporter.render({
       options: {
         preview: true
       },
@@ -165,13 +162,14 @@ describe('excel recipe', () => {
         engine: 'handlebars',
         content: '{{{xlsxPrint}}}'
       }
-    }).then((res) => {
-      res.content.toString().should.containEql('iframe')
     })
+
+    res.content.toString().should.containEql('iframe')
   })
 
-  it('should return iframe in preview with title including template name', () => {
-    return reporter.documentStore.collection('templates').insert({name: 'foo'}).then(() => reporter.render({
+  it('should return iframe in preview with title including template name', async () => {
+    await reporter.documentStore.collection('templates').insert({name: 'foo', engine: 'none', recipe: 'html'})
+    const res = await reporter.render({
       options: {
         preview: true
       },
@@ -181,9 +179,9 @@ describe('excel recipe', () => {
         engine: 'handlebars',
         content: '{{{xlsxPrint}}}'
       }
-    }).then((res) => {
-      res.content.toString().should.containEql('<title>foo</title>')
-    }))
+    })
+
+    res.content.toString().should.containEql('<title>foo</title>')
   })
 
   it('should disable preview if the options has previewInExcelOnline === false', () => {
@@ -272,7 +270,7 @@ describe('excel recipe with disabled add parsing', () => {
   let reporter
 
   beforeEach(() => {
-    reporter = new Reporter({
+    reporter = jsreport({
       rootDirectory: path.join(__dirname, '../'),
       xlsx: {
         numberOfParsedAddIterations: 0,
@@ -356,7 +354,7 @@ describe('excel recipe with in process helpers', () => {
   let reporter
 
   beforeEach(() => {
-    reporter = new Reporter({
+    reporter = jsreport({
       rootDirectory: path.join(__dirname, '../'),
       tasks: { strategy: 'in-process' }
     })
@@ -385,7 +383,7 @@ describe('excel recipe should not be broken by assets running after', () => {
   let reporter
 
   beforeEach(() => {
-    reporter = new Reporter()
+    reporter = jsreport()
 
     reporter.use(templates())
     reporter.use(handlebars())

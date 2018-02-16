@@ -10,7 +10,10 @@
   },
   "env": {
     "node": true,
-    "mocha": true,
-    "browser": true
+    "mocha": true
+  },
+  "globals": {
+    "define": true,
+    "ace": true
   }
 }

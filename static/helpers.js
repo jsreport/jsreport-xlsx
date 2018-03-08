@@ -1,9 +1,7 @@
 /* eslint no-unused-vars: 1 */
 /* eslint no-new-func: 0 */
 /* *global __rootDirectory */
-/* global m */
 (function (global) {
-  var path = require('path')
   var fsproxy = this.fsproxy || require('fsproxy.js')
 
   function print () {
@@ -69,7 +67,7 @@
       Object.keys(worksheet).sort(function (a, b) {
         if (!worksheetOrder[a]) return -1 // undefined in worksheetOrder goes at top of list
         if (!worksheetOrder[b]) return 1
-        if (worksheetOrder[a] == worksheetOrder[b]) return 0
+        if (worksheetOrder[a] === worksheetOrder[b]) return 0
         return worksheetOrder[a] > worksheetOrder[b] ? 1 : -1
       }).forEach(function (a) {
         sortedWorksheet[a] = worksheet[a]

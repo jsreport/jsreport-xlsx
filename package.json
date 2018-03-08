@@ -13,7 +13,7 @@
   "main": "index.js",
   "scripts": {
     "build": "jsreport-studio-build",
-    "test": "mocha test --timeout 10000",
+    "test": "mocha test --timeout 10000&&standard",
     "prepublish": "in-publish && jsreport-studio-build && npm-run-all lint clean build || not-in-publish"
   },
   "standard": {

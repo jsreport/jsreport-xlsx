@@ -83,11 +83,10 @@ export default class ImageUploadButton extends Component {
   renderUpload () {
     return <input
       type='file' key='file' ref='file' style={{display: 'none'}} onChange={(e) => this.upload(e)}
-      accept='.xlsx'></input>
+      accept='.xlsx' />
   }
 
   render () {
     return this.renderUpload(true)
   }
 }
-

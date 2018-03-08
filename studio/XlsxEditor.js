@@ -49,4 +49,3 @@ export default class ImageEditor extends Component {
     </div>)
   }
 }
-

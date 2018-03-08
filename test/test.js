@@ -17,9 +17,12 @@ describe('excel recipe', () => {
 
   beforeEach(() => {
     reporter = jsreport({
-      rootDirectory: path.join(__dirname, '../'),
       tasks: { strategy: 'in-process' }
     })
+    reporter.use(templates())
+    reporter.use(handlebars())
+    reporter.use(assets())
+    reporter.use(xlsxRecipe())
 
     return reporter.init()
   })

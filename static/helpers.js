@@ -132,7 +132,7 @@
   }
 
   function flush (buf, root) {
-    root.$files.push(fsproxy.write(root.$tempDirectory, buf.data))
+    root.$files.push(fsproxy.write(root.$tempAutoCleanupDirectory, buf.data))
     buf.collection.push({ $$: root.$files.length - 1 })
     buf.data = ''
   }

@@ -474,12 +474,43 @@
 	  }
 	
 	  _createClass(Properties, [{
-	    key: 'render',
-	    value: function render() {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.removeInvalidXlsxTemplateReferences();
+	    }
+	  }, {
+	    key: 'componentDidUpdate',
+	    value: function componentDidUpdate() {
+	      this.removeInvalidXlsxTemplateReferences();
+	    }
+	  }, {
+	    key: 'removeInvalidXlsxTemplateReferences',
+	    value: function removeInvalidXlsxTemplateReferences() {
 	      var _props = this.props,
 	          entity = _props.entity,
 	          entities = _props.entities,
-	          _onChange = _props.onChange;
+	          onChange = _props.onChange;
+	
+	
+	      if (!entity.xlsxTemplate) {
+	        return;
+	      }
+	
+	      var updatedXlsxTemplates = Object.keys(entities).filter(function (k) {
+	        return entities[k].__entitySet === 'xlsxTemplates' && entities[k].shortid === entity.xlsxTemplate.shortid;
+	      });
+	
+	      if (updatedXlsxTemplates.length === 0) {
+	        onChange({ _id: entity._id, xlsxTemplate: null });
+	      }
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _props2 = this.props,
+	          entity = _props2.entity,
+	          entities = _props2.entities,
+	          _onChange = _props2.onChange;
 	
 	      var xlsxTemplateItems = Properties.selectItems(entities);
 	

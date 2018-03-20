@@ -19,6 +19,28 @@ export default class Properties extends Component {
     return 'xlsx template: ' + foundItems[0].name
   }
 
+  componentDidMount () {
+    this.removeInvalidXlsxTemplateReferences()
+  }
+
+  componentDidUpdate () {
+    this.removeInvalidXlsxTemplateReferences()
+  }
+
+  removeInvalidXlsxTemplateReferences () {
+    const { entity, entities, onChange } = this.props
+
+    if (!entity.xlsxTemplate) {
+      return
+    }
+
+    const updatedXlsxTemplates = Object.keys(entities).filter((k) => entities[k].__entitySet === 'xlsxTemplates' && entities[k].shortid === entity.xlsxTemplate.shortid)
+
+    if (updatedXlsxTemplates.length === 0) {
+      onChange({ _id: entity._id, xlsxTemplate: null })
+    }
+  }
+
   render () {
     const { entity, entities, onChange } = this.props
     const xlsxTemplateItems = Properties.selectItems(entities)

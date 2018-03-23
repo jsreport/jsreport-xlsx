@@ -17,7 +17,7 @@ describe('excel recipe', () => {
 
   beforeEach(() => {
     reporter = jsreport({
-      tasks: { strategy: 'in-process' }
+      templatingEngines: { strategy: 'in-process' }
     })
     reporter.use(templates())
     reporter.use(handlebars())
@@ -359,7 +359,7 @@ describe('excel recipe with in process helpers', () => {
   beforeEach(() => {
     reporter = jsreport({
       rootDirectory: path.join(__dirname, '../'),
-      tasks: { strategy: 'in-process' }
+      templatingEngines: { strategy: 'in-process' }
     })
 
     return reporter.init()

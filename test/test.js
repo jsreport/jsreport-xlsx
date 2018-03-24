@@ -242,7 +242,7 @@ describe('excel recipe', () => {
     })
   })
 
-  it('should escape entities', () => {
+  it('should escape entities passed from data', () => {
     return reporter.render({
       template: {
         recipe: 'xlsx',
@@ -275,9 +275,14 @@ describe('excel recipe with disabled add parsing', () => {
   beforeEach(() => {
     reporter = jsreport({
       rootDirectory: path.join(__dirname, '../'),
-      xlsx: {
-        numberOfParsedAddIterations: 0,
-        addBufferSize: 200
+      templatingEngines: {
+        strategy: 'in-process'
+      },
+      extensions: {
+        xlsx: {
+          numberOfParsedAddIterations: 0,
+          addBufferSize: 200
+        }
       }
     })
 

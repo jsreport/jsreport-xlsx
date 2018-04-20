@@ -19,6 +19,7 @@ describe('excel recipe', () => {
     reporter = jsreport({
       templatingEngines: { strategy: 'in-process' }
     })
+
     reporter.use(templates())
     reporter.use(handlebars())
     reporter.use(assets())

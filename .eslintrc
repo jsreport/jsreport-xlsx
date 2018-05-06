@@ -12,5 +12,9 @@
     "node": true,
     "mocha": true,
     "browser": true
+  },
+  "globals": {
+    "define": true,
+    "ace": true
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "jsreport-xlsx",
-  "version": "1.4.2",
+  "version": "2.0.0",
   "description": "jsreport recipe rendering excels directly from open xml",
   "repository": {
     "type": "git",
@@ -14,7 +14,7 @@
   "scripts": {
     "build": "jsreport-studio-build",
     "test": "mocha test --timeout 10000 && standard",
-    "prepublish": "in-publish && jsreport-studio-build && npm-run-all lint clean build || not-in-publish"
+    "prepublish": "in-publish && jsreport-studio-build || not-in-publish"
   },
   "standard": {
     "ignore": [

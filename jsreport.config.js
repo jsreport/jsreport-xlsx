@@ -6,7 +6,8 @@ const schema = {
     publicUriForPreview: { type: 'string' },
     escapeAmp: { type: 'boolean' },
     addBufferSize: { type: 'number' },
-    numberOfParsedAddIterations: { type: 'number' }
+    numberOfParsedAddIterations: { type: 'number' },
+    showExcelOnlineWarning: { type: 'boolean', default: true }
   }
 }
 

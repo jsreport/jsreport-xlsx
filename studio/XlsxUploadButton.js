@@ -11,8 +11,8 @@ export default class ImageUploadButton extends Component {
 
   // we need to have global action in main_dev which is triggered when users clicks on + on images
   // this triggers invisible button in the toolbar
-  static OpenUpload (forNew = true) {
-    _xlsxTemplateUploadButton.openFileDialog(forNew)
+  static OpenUpload (forNew = true, options) {
+    _xlsxTemplateUploadButton.openFileDialog(forNew, options)
   }
 
   componentDidMount () {
@@ -24,6 +24,10 @@ export default class ImageUploadButton extends Component {
       return
     }
 
+    const xlsxDefaults = e.target.xlsxDefaults
+
+    delete e.target.xlsxDefaults
+
     const file = e.target.files[0]
     const reader = new FileReader()
 
@@ -34,12 +38,21 @@ export default class ImageUploadButton extends Component {
           await Studio.workspaces.save()
         }
 
-        let response = await Studio.api.post('/odata/xlsxTemplates', {
-          data: {
-            contentRaw: reader.result.substring(reader.result.indexOf('base64,') + 'base64,'.length),
-            name: file.name.replace(/.xlsx$/, '')
-          }
+        let xlsx = {}
+
+        if (xlsxDefaults != null) {
+          xlsx = Object.assign(xlsx, xlsxDefaults)
+        }
+
+        xlsx = Object.assign(xlsx, {
+          contentRaw: reader.result.substring(reader.result.indexOf('base64,') + 'base64,'.length),
+          name: file.name.replace(/.xlsx$/, '')
         })
+
+        let response = await Studio.api.post('/odata/xlsxTemplates', {
+          data: xlsx
+        })
+
         response.__entitySet = 'xlsxTemplates'
 
         Studio.addExistingEntity(response)
@@ -70,8 +83,14 @@ export default class ImageUploadButton extends Component {
     reader.readAsDataURL(file)
   }
 
-  openFileDialog (forNew) {
+  openFileDialog (forNew, options) {
     this.forNew = forNew
+
+    if (options.defaults) {
+      this.refs.file.xlsxDefaults = options.defaults
+    } else {
+      delete this.refs.file.xlsxDefaults
+    }
 
     this.refs.file.dispatchEvent(new MouseEvent('click', {
       'view': window,

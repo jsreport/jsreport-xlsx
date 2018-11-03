@@ -44,12 +44,15 @@
     ignoredErrors: 26,
     smartTags: 27,
     drawing: 28,
-    picture: 29,
-    oleObjects: 30,
-    controls: 31,
-    webPublishItems: 32,
-    tableParts: 33,
-    extLst: 34
+    legacyDrawing: 29,
+    legacyDrawingHeaderFooter: 30,
+    drawingHeaderFooter: 31,
+    picture: 32,
+    oleObjects: 33,
+    controls: 34,
+    webPublishItems: 35,
+    tableParts: 36,
+    extLst: 37
   }
 
   function ensureWorksheetOrder (data) {

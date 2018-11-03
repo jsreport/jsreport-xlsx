@@ -9,6 +9,7 @@ const assets = require('jsreport-assets')
 const templates = require('jsreport-templates')
 const handlebars = require('jsreport-handlebars')
 const xlsxRecipe = require('../index')
+const jsonToXml = require('../lib/jsonToXml')
 
 process.env.DEBUG = ''
 
@@ -229,45 +230,6 @@ describe('excel recipe', () => {
       xlsx.read(res.content).Sheets.Sheet1.A1.v.should.be.eql('& & &')
     })
   })
-
-  it('should pass escaped entities', () => {
-    return reporter.render({
-      template: {
-        recipe: 'xlsx',
-        engine: 'handlebars',
-        content: fs.readFileSync(path.join(__dirname, 'content', 'add-row-with-foo-value.handlebars'), 'utf8').replace('{{foo}}', '{{{foo}}} > " ' + '"' + ' /')
-      },
-      data: { foo: '&lt;' }
-    }).then((res) => {
-      xlsx.read(res.content).Sheets.Sheet1.A1.v.should.be.eql('< > " ' + '"' + ' /')
-    })
-  })
-
-  it('should escape entities passed from data', () => {
-    return reporter.render({
-      template: {
-        recipe: 'xlsx',
-        engine: 'handlebars',
-        content: fs.readFileSync(path.join(__dirname, 'content', 'add-row-with-foo-value.handlebars'), 'utf8')
-      },
-      data: { foo: '<' }
-    }).then((res) => {
-      xlsx.read(res.content).Sheets.Sheet1.A1.v.should.be.eql('<')
-    })
-  })
-
-  it('should escape entities in attributes', () => {
-    return reporter.render({
-      template: {
-        recipe: 'xlsx',
-        engine: 'handlebars',
-        content: fs.readFileSync(path.join(__dirname, 'content', 'rename-sheet.handlebars'), 'utf8')
-      },
-      data: { foo: '<' }
-    }).then((res) => {
-      xlsx.read(res.content).Sheets['<XXX'].should.be.ok()
-    })
-  })
 })
 
 describe('excel recipe with disabled add parsing', () => {
@@ -411,6 +373,32 @@ describe('excel recipe should not be broken by assets running after', () => {
       }
     }).then((res) => {
       xlsx.read(res.content).SheetNames[0].should.be.eql('Sheet1')
+    })
+  })
+})
+
+describe('jsonToXml', () => {
+  describe('escaping node values', () => {
+    it('should escape entities', () => {
+      jsonToXml({ a: `<>&` }).xml.should.containEql(`&lt;&gt;&amp;`)
+    })
+
+    it('should not escape quotes', () => {
+      jsonToXml({ a: `'"` }).xml.should.containEql(`'"`)
+    })
+
+    it('should not escape amp which is already escaping another char', () => {
+      jsonToXml({ a: `&amp;&#x27;&quot;&#x27;&#x3D;;` }).xml.should.containEql(`&amp;&#x27;&quot;&#x27;&#x3D;;`)
+    })
+  })
+
+  describe('escaping attributes', () => {
+    it('should escape entities', () => {
+      jsonToXml({ a: { $: { b: `<>&"'` } } }).xml.should.containEql(`&lt;&gt;&amp;&quot;&#x27;`)
+    })
+
+    it('should not escape amp which is already escaping another char', () => {
+      jsonToXml({ a: { $: { b: `&amp;&#x27;&quot;&#x27;&#x3D;;` } } }).xml.should.containEql(`&amp;&#x27;&quot;&#x27;&#x3D;;`)
     })
   })
 })

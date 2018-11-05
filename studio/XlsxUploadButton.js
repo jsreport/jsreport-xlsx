@@ -83,7 +83,7 @@ export default class ImageUploadButton extends Component {
     reader.readAsDataURL(file)
   }
 
-  openFileDialog (forNew, options) {
+  openFileDialog (forNew, options = {}) {
     this.forNew = forNew
 
     if (options.defaults) {

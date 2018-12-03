@@ -1,7 +1,7 @@
 /* eslint no-unused-vars: 1 */
 /* eslint no-new-func: 0 */
 /* *global __rootDirectory */
-(function (global) {
+;(function (global) {
   var fsproxy = this.fsproxy || require('fsproxy.js')
 
   function print () {

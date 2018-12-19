@@ -1,6 +1,6 @@
 import XlsxEditor from './XlsxEditor.js'
 import XlsxUploadButton from './XlsxUploadButton.js'
-import Properties from './XlsxTemplateProperties.js'
+import XlsxTemplateProperties from './XlsxTemplateProperties.js'
 import Studio from 'jsreport-studio'
 
 Studio.addEntitySet({
@@ -12,7 +12,7 @@ Studio.addEntitySet({
 })
 Studio.addEditorComponent('xlsxTemplates', XlsxEditor)
 Studio.addToolbarComponent(XlsxUploadButton)
-Studio.addPropertiesComponent(Properties.title, Properties, (entity) => entity.__entitySet === 'templates' && entity.recipe === 'xlsx')
+Studio.addPropertiesComponent(XlsxTemplateProperties.title, XlsxTemplateProperties, (entity) => entity.__entitySet === 'templates' && entity.recipe === 'xlsx')
 
 Studio.previewListeners.push((request, entities) => {
   if (request.template.recipe !== 'xlsx') {

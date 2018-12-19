@@ -26,6 +26,13 @@ build/Release
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
 node_modules
 
+data
+
+# configuration files
+dev.config.json
+prod.config.json
+jsreport.config.json
+
 .idea
 
 studio/main.js

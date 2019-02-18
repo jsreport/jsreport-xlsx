@@ -2,12 +2,12 @@
 const schema = {
   type: 'object',
   properties: {
-    previewInExcelOnline: { type: 'boolean', $exposeToApi: true },
+    previewInExcelOnline: { type: 'boolean' },
     publicUriForPreview: { type: 'string' },
     escapeAmp: { type: 'boolean' },
     addBufferSize: { type: 'number' },
     numberOfParsedAddIterations: { type: 'number' },
-    showExcelOnlineWarning: { type: 'boolean', default: true, $exposeToApi: true }
+    showExcelOnlineWarning: { type: 'boolean', default: true }
   }
 }
 

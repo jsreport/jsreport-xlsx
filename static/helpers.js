@@ -45,14 +45,15 @@
     smartTags: 27,
     drawing: 28,
     legacyDrawing: 29,
-    legacyDrawingHeaderFooter: 30,
-    drawingHeaderFooter: 31,
-    picture: 32,
-    oleObjects: 33,
-    controls: 34,
-    webPublishItems: 35,
-    tableParts: 36,
-    extLst: 37
+    legacyDrawingHF: 30,
+    legacyDrawingHeaderFooter: 31,
+    drawingHeaderFooter: 32,
+    picture: 33,
+    oleObjects: 34,
+    controls: 35,
+    webPublishItems: 36,
+    tableParts: 37,
+    extLst: 38
   }
 
   function ensureWorksheetOrder (data) {

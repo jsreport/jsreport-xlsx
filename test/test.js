@@ -189,22 +189,6 @@ describe('excel recipe', () => {
     res.content.toString().should.containEql('<title>foo</title>')
   })
 
-  it('should disable preview if the options has previewInExcelOnline === false', () => {
-    reporter.options.xlsx = { previewInExcelOnline: false }
-    return reporter.render({
-      options: {
-        preview: true
-      },
-      template: {
-        recipe: 'xlsx',
-        engine: 'handlebars',
-        content: '{{{xlsxPrint}}}'
-      }
-    }).then((res) => {
-      res.content.toString().should.not.containEql('iframe')
-    })
-  })
-
   it('should be able to use string helpers', () => {
     return reporter.render({
       template: {
@@ -228,6 +212,39 @@ describe('excel recipe', () => {
       data: { foo: '&' }
     }).then((res) => {
       xlsx.read(res.content).Sheets.Sheet1.A1.v.should.be.eql('& & &')
+    })
+  })
+})
+
+describe('excel recipe with disabled preview', () => {
+  let reporter
+
+  beforeEach(() => {
+    reporter = jsreport({
+      xlsx: {
+        previewInExcelOnline: false
+      }
+    })
+
+    reporter.use(templates())
+    reporter.use(handlebars())
+    reporter.use(xlsxRecipe())
+
+    return reporter.init()
+  })
+
+  it('should return excel when preview true', () => {
+    return reporter.render({
+      options: {
+        preview: true
+      },
+      template: {
+        recipe: 'xlsx',
+        engine: 'handlebars',
+        content: '{{{xlsxPrint}}}'
+      }
+    }).then((res) => {
+      res.content.toString().should.not.containEql('iframe')
     })
   })
 })

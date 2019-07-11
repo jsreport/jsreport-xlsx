@@ -29,19 +29,14 @@
     "parser": "babel-eslint"
   },
   "dependencies": {
-    "archiver": "3.0.0",
     "bluebird": "3.5.3",
-    "get-stream": "4.1.0",
+    "jsreport-office": "github:jsreport/jsreport-office",
     "lodash": "4.17.11",
     "merge2": "1.2.3",
     "mkdirp": "0.5.1",
     "msexcel-builder-extended": "0.0.8",
-    "pify": "4.0.1",
-    "request": "2.88.0",
-    "stream-to-array": "2.3.0",
     "uuid": "3.3.2",
-    "xml2js-preserve-spaces": "0.0.1",
-    "yauzl": "2.10.0"
+    "xml2js-preserve-spaces": "0.0.1"
   },
   "devDependencies": {
     "babel-core": "6.26.3",

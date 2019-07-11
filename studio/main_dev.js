@@ -19,22 +19,22 @@ Studio.previewListeners.push((request, entities) => {
     return
   }
 
-  if (Studio.extensions.xlsx.options.showExcelOnlineWarning === false) {
+  if (Studio.extensions.xlsx.options.preview.enabled === false) {
     return
   }
 
-  if (Studio.extensions.xlsx.options.previewInExcelOnline === false) {
+  if (Studio.extensions.xlsx.options.preview.showWarning === false) {
     return
   }
 
-  if (Studio.getSettingValueByKey('xlsx-preview-informed', false) === true) {
+  if (Studio.getSettingValueByKey('office-preview-informed', false) === true) {
     return
   }
 
-  Studio.setSetting('xlsx-preview-informed', true)
+  Studio.setSetting('office-preview-informed', true)
 
   Studio.openModal(() => <div>
-    We need to upload your excel report to our publicly hosted server to be able to use
+    We need to upload your office report to our publicly hosted server to be able to use
     Excel Online Service for previewing here in the studio. You can disable it in the configuration, see <a
       href='https://github.com/jsreport/jsreport-xlsx' target='_blank'>https://github.com/jsreport/jsreport-xlsx</a> for details.
   </div>)

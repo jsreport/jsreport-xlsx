@@ -1,3 +1,4 @@
+const office = require('jsreport-office')
 
 const schema = {
   type: 'object',
@@ -14,11 +15,11 @@ const schema = {
 module.exports = {
   'name': 'xlsx',
   'main': 'lib/index.js',
-  'optionsSchema': {
+  'optionsSchema': office.extendSchema('xlsx', {
     xlsx: { ...schema },
     extensions: {
       xlsx: { ...schema }
     }
-  },
+  }),
   'dependencies': ['templates', 'data']
 }

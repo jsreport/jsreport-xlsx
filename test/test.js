@@ -216,7 +216,7 @@ describe('excel recipe', () => {
   })
 })
 
-describe('excel recipe with disabled preview', () => {
+describe('excel recipe with previewInExcelOnline false', () => {
   let reporter
 
   beforeEach(() => {
@@ -249,6 +249,126 @@ describe('excel recipe with disabled preview', () => {
   })
 })
 
+describe('excel recipe with office.preview.enabled=false and extensions.xlsx.preview.enabled=true', () => {
+  let reporter
+
+  beforeEach(() => {
+    reporter = jsreport({
+      office: {
+        preview: {
+          enabled: false
+        }
+      },
+      extensions: {
+        xlsx: {
+          preview: {
+            enabled: true
+          }
+        }
+      }
+    })
+
+    reporter.use(templates())
+    reporter.use(handlebars())
+    reporter.use(xlsxRecipe())
+
+    return reporter.init()
+  })
+
+  it('should return html when preview true', () => {
+    return reporter.render({
+      options: {
+        preview: true
+      },
+      template: {
+        recipe: 'xlsx',
+        engine: 'handlebars',
+        content: '{{{xlsxPrint}}}'
+      }
+    }).then((res) => {
+      res.content.toString().should.containEql('iframe')
+    })
+  })
+})
+
+describe('excel recipe with office.preview.enabled=false and extensions.xlsx.previewInExcelOnline=true', () => {
+  let reporter
+
+  beforeEach(() => {
+    reporter = jsreport({
+      office: {
+        preview: {
+          enabled: false
+        }
+      },
+      extensions: {
+        xlsx: {
+          previewInExcelOnline: true
+        }
+      }
+    })
+
+    reporter.use(templates())
+    reporter.use(handlebars())
+    reporter.use(xlsxRecipe())
+
+    return reporter.init()
+  })
+
+  it('should return html when preview true', () => {
+    return reporter.render({
+      options: {
+        preview: true
+      },
+      template: {
+        recipe: 'xlsx',
+        engine: 'handlebars',
+        content: '{{{xlsxPrint}}}'
+      }
+    }).then((res) => {
+      res.content.toString().should.containEql('iframe')
+    })
+  })
+})
+
+describe('excel recipe with office.preview.enabled=false and xlsx.previewInExcelOnline=true', () => {
+  let reporter
+
+  beforeEach(() => {
+    reporter = jsreport({
+      office: {
+        preview: {
+          enabled: false
+        }
+      },
+      xlsx: {
+        previewInExcelOnline: true
+      }
+    })
+
+    reporter.use(templates())
+    reporter.use(handlebars())
+    reporter.use(xlsxRecipe())
+
+    return reporter.init()
+  })
+
+  it('should return html when preview true', () => {
+    return reporter.render({
+      options: {
+        preview: true
+      },
+      template: {
+        recipe: 'xlsx',
+        engine: 'handlebars',
+        content: '{{{xlsxPrint}}}'
+      }
+    }).then((res) => {
+      res.content.toString().should.containEql('iframe')
+    })
+  })
+})
+
 describe('excel recipe with disabled add parsing', () => {
   let reporter
 
@@ -258,6 +378,7 @@ describe('excel recipe with disabled add parsing', () => {
       templatingEngines: {
         strategy: 'in-process'
       },
+      office: { },
       extensions: {
         xlsx: {
           numberOfParsedAddIterations: 0,

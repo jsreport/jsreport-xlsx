@@ -85,6 +85,7 @@
 	    return;
 	  }
 	
+<<<<<<< HEAD
 	  if (_jsreportStudio2.default.extensions.xlsx.options.preview.enabled === false) {
 	    return;
 	  }
@@ -98,17 +99,41 @@
 	  }
 	
 	  _jsreportStudio2.default.setSetting('office-preview-informed', true);
+=======
+	  if (_jsreportStudio2.default.extensions.xlsx.options.showExcelOnlineWarning === false) {
+	    return;
+	  }
+	
+	  if (_jsreportStudio2.default.extensions.xlsx.options.previewInExcelOnline === false) {
+	    return;
+	  }
+	
+	  if (_jsreportStudio2.default.getSettingValueByKey('xlsx-preview-informed', false) === true) {
+	    return;
+	  }
+	
+	  _jsreportStudio2.default.setSetting('xlsx-preview-informed', true);
+>>>>>>> pkg-compile
 	
 	  _jsreportStudio2.default.openModal(function () {
 	    return React.createElement(
 	      'div',
 	      null,
+<<<<<<< HEAD
 	      'We need to upload your office report to our publicly hosted server to be able to use Excel Online Service for previewing here in the studio. You can disable it in the configuration, see ',
 	      React.createElement(
 	        'a',
 	        {
 	          href: 'https://jsreport.net/learn/xlsx', target: '_blank' },
 	        'https://jsreport.net/learn/xlsx'
+=======
+	      'We need to upload your excel report to our publicly hosted server to be able to use Excel Online Service for previewing here in the studio. You can disable it in the configuration, see ',
+	      React.createElement(
+	        'a',
+	        {
+	          href: 'https://github.com/jsreport/jsreport-xlsx', target: '_blank' },
+	        'https://github.com/jsreport/jsreport-xlsx'
+>>>>>>> pkg-compile
 	      ),
 	      ' for details.'
 	    );

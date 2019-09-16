@@ -25,8 +25,10 @@ export default class ImageUploadButton extends Component {
     }
 
     const xlsxDefaults = e.target.xlsxDefaults
+    const uploadCallback = e.target.uploadCallback
 
     delete e.target.xlsxDefaults
+    delete e.target.uploadCallback
 
     const file = e.target.files[0]
     const reader = new FileReader()
@@ -74,10 +76,20 @@ export default class ImageUploadButton extends Component {
           Studio.loadEntity(this.props.tab.entity._id, true)
         }
       }
+
+      if (uploadCallback) {
+        uploadCallback()
+      }
     }
 
     reader.onerror = function () {
-      alert('There was an error reading the file!')
+      const errMsg = 'There was an error reading the file!'
+
+      if (uploadCallback) {
+        uploadCallback(new Error(errMsg))
+      }
+
+      alert(errMsg)
     }
 
     reader.readAsDataURL(file)
@@ -90,6 +102,12 @@ export default class ImageUploadButton extends Component {
       this.refs.file.xlsxDefaults = options.defaults
     } else {
       delete this.refs.file.xlsxDefaults
+    }
+
+    if (options.uploadCallback) {
+      this.refs.file.uploadCallback = options.uploadCallback
+    } else {
+      delete this.refs.file.uploadCallback
     }
 
     this.refs.file.dispatchEvent(new MouseEvent('click', {

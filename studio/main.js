@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -98,6 +98,49 @@ module.exports = Studio;
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports) {
+
+module.exports = Studio.libraries['filesaver.js-npm'];
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var b64toBlob = function b64toBlob(b64Data) {
+  var contentType = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+  var sliceSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 512;
+
+  var byteCharacters = atob(b64Data);
+  var byteArrays = [];
+
+  for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    var slice = byteCharacters.slice(offset, offset + sliceSize);
+
+    var byteNumbers = new Array(slice.length);
+    for (var i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+
+    var byteArray = new Uint8Array(byteNumbers);
+
+    byteArrays.push(byteArray);
+  }
+
+  var blob = new Blob(byteArrays, { type: contentType });
+  return blob;
+};
+
+exports.default = b64toBlob;
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -153,8 +196,10 @@ var ImageUploadButton = function (_Component) {
       }
 
       var xlsxDefaults = e.target.xlsxDefaults;
+      var uploadCallback = e.target.uploadCallback;
 
       delete e.target.xlsxDefaults;
+      delete e.target.uploadCallback;
 
       var file = e.target.files[0];
       var reader = new FileReader();
@@ -239,6 +284,12 @@ var ImageUploadButton = function (_Component) {
                 _jsreportStudio2.default.loadEntity(_this2.props.tab.entity._id, true);
 
               case 25:
+
+                if (uploadCallback) {
+                  uploadCallback();
+                }
+
+              case 26:
               case 'end':
                 return _context.stop();
             }
@@ -247,7 +298,13 @@ var ImageUploadButton = function (_Component) {
       }));
 
       reader.onerror = function () {
-        alert('There was an error reading the file!');
+        var errMsg = 'There was an error reading the file!';
+
+        if (uploadCallback) {
+          uploadCallback(new Error(errMsg));
+        }
+
+        alert(errMsg);
       };
 
       reader.readAsDataURL(file);
@@ -263,6 +320,12 @@ var ImageUploadButton = function (_Component) {
         this.refs.file.xlsxDefaults = options.defaults;
       } else {
         delete this.refs.file.xlsxDefaults;
+      }
+
+      if (options.uploadCallback) {
+        this.refs.file.uploadCallback = options.uploadCallback;
+      } else {
+        delete this.refs.file.uploadCallback;
       }
 
       this.refs.file.dispatchEvent(new MouseEvent('click', {
@@ -310,21 +373,31 @@ ImageUploadButton.propTypes = {
 exports.default = ImageUploadButton;
 
 /***/ }),
-/* 3 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _XlsxEditor = __webpack_require__(4);
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _filesaver = __webpack_require__(2);
+
+var _filesaver2 = _interopRequireDefault(_filesaver);
+
+var _XlsxEditor = __webpack_require__(6);
 
 var _XlsxEditor2 = _interopRequireDefault(_XlsxEditor);
 
-var _XlsxUploadButton = __webpack_require__(2);
+var _b64toBlob = __webpack_require__(3);
+
+var _b64toBlob2 = _interopRequireDefault(_b64toBlob);
+
+var _XlsxUploadButton = __webpack_require__(4);
 
 var _XlsxUploadButton2 = _interopRequireDefault(_XlsxUploadButton);
 
-var _XlsxTemplateProperties = __webpack_require__(6);
+var _XlsxTemplateProperties = __webpack_require__(7);
 
 var _XlsxTemplateProperties2 = _interopRequireDefault(_XlsxTemplateProperties);
 
@@ -344,7 +417,78 @@ _jsreportStudio2.default.addEntitySet({
   },
   entityTreePosition: 500
 });
+
 _jsreportStudio2.default.addEditorComponent('xlsxTemplates', _XlsxEditor2.default);
+
+_jsreportStudio2.default.entityEditorComponentKeyResolvers.push(function (entity) {
+  if (entity.__entitySet === 'xlsxTemplates') {
+    var editorKey = 'xlsxTemplates';
+    var editorProps = {};
+
+    if (_jsreportStudio2.default.extensions.assets) {
+      // use assets editor for xlsxTemplate when
+      // asset extension exists
+      editorKey = 'assets';
+
+      editorProps.icon = 'fa-file-excel-o';
+      editorProps.showHelp = false;
+      editorProps.embeddingCode = '';
+      editorProps.displayName = entity.name;
+
+      editorProps.onPreview = function () {
+        if (_jsreportStudio2.default.extensions.xlsx.options.preview.showWarning !== false && _jsreportStudio2.default.getSettingValueByKey('office-preview-informed', false) !== true) {
+          _jsreportStudio2.default.setSetting('office-preview-informed', true);
+
+          _jsreportStudio2.default.openModal(function () {
+            return React.createElement(
+              'div',
+              null,
+              'We need to upload your xlsx to our publicly hosted server to be able to use Office Online Service for previewing here in the studio. You can disable it in the configuration, see ',
+              React.createElement(
+                'a',
+                {
+                  href: 'https://jsreport.net/learn/xlsx#preview-in-studio', target: '_blank' },
+                'the docs'
+              ),
+              ' for details.'
+            );
+          });
+        }
+      };
+
+      editorProps.onDownload = function (entity) {
+        var blob = (0, _b64toBlob2.default)(entity.contentRaw, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        _filesaver2.default.saveAs(blob, entity.name);
+      };
+
+      editorProps.onUpload = function (entity, cb) {
+        _XlsxUploadButton2.default.OpenUpload(false, {
+          uploadCallback: cb
+        });
+      };
+
+      editorProps.getPreviewContent = function (entity, _ref) {
+        var previewLoadFinish = _ref.previewLoadFinish;
+
+        return React.createElement(_jsreportStudio.Preview, {
+          onLoad: previewLoadFinish,
+          initialSrc: _jsreportStudio2.default.resolveUrl('xlsxTemplates/office/' + entity._id + '/content')
+        });
+      };
+
+      editorProps.emptyMessage = 'xlsxTemplate is empty';
+    }
+
+    return {
+      key: editorKey,
+      entity: editorKey === 'assets' ? _extends({}, entity, {
+        name: entity.name + '.xlsx'
+      }) : entity,
+      props: editorProps
+    };
+  }
+});
+
 _jsreportStudio2.default.addToolbarComponent(_XlsxUploadButton2.default);
 _jsreportStudio2.default.addPropertiesComponent(_XlsxTemplateProperties2.default.title, _XlsxTemplateProperties2.default, function (entity) {
   return entity.__entitySet === 'templates' && entity.recipe === 'xlsx';
@@ -386,7 +530,7 @@ _jsreportStudio2.default.previewListeners.push(function (request, entities) {
 });
 
 /***/ }),
-/* 4 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -402,11 +546,15 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _XlsxUploadButton = __webpack_require__(2);
+var _b64toBlob = __webpack_require__(3);
+
+var _b64toBlob2 = _interopRequireDefault(_b64toBlob);
+
+var _XlsxUploadButton = __webpack_require__(4);
 
 var _XlsxUploadButton2 = _interopRequireDefault(_XlsxUploadButton);
 
-var _filesaver = __webpack_require__(5);
+var _filesaver = __webpack_require__(2);
 
 var _filesaver2 = _interopRequireDefault(_filesaver);
 
@@ -417,30 +565,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var b64toBlob = function b64toBlob(b64Data) {
-  var contentType = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-  var sliceSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 512;
-
-  var byteCharacters = atob(b64Data);
-  var byteArrays = [];
-
-  for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-    var slice = byteCharacters.slice(offset, offset + sliceSize);
-
-    var byteNumbers = new Array(slice.length);
-    for (var i = 0; i < slice.length; i++) {
-      byteNumbers[i] = slice.charCodeAt(i);
-    }
-
-    var byteArray = new Uint8Array(byteNumbers);
-
-    byteArrays.push(byteArray);
-  }
-
-  var blob = new Blob(byteArrays, { type: contentType });
-  return blob;
-};
 
 var ImageEditor = function (_Component) {
   _inherits(ImageEditor, _Component);
@@ -454,7 +578,7 @@ var ImageEditor = function (_Component) {
   _createClass(ImageEditor, [{
     key: 'download',
     value: function download() {
-      var blob = b64toBlob(this.props.entity.contentRaw, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      var blob = (0, _b64toBlob2.default)(this.props.entity.contentRaw, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       _filesaver2.default.saveAs(blob, this.props.entity.name);
     }
   }, {
@@ -512,13 +636,7 @@ ImageEditor.propTypes = {
 exports.default = ImageEditor;
 
 /***/ }),
-/* 5 */
-/***/ (function(module, exports) {
-
-module.exports = Studio.libraries['filesaver.js-npm'];
-
-/***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

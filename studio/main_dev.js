@@ -26,7 +26,6 @@ Studio.entityEditorComponentKeyResolvers.push((entity) => {
       editorKey = 'assets'
 
       editorProps.icon = 'fa-file-excel-o'
-      editorProps.showHelp = false
       editorProps.embeddingCode = ''
       editorProps.displayName = entity.name
 

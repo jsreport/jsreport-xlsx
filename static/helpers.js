@@ -245,13 +245,18 @@
 
   function ensureDrawingOnSheet (sheetFullName) {
     var drawingFullName
-    if (this.ctx.root.$xlsxTemplate['xl/worksheets/' + sheetFullName].worksheet.drawing) {
-      var rid = this.ctx.root.$xlsxTemplate['xl/worksheets/' + sheetFullName].worksheet.drawing.$['r:id']
-      this.ctx.root.$xlsxTemplate['xl/worksheets/_rels/' + sheetFullName + '.rels'].Relationships.Relationship.forEach(function (r) {
-        if (r.$.Id === rid) {
-          drawingFullName = r.$.Target.replace('../drawings/', '')
-        }
-      })
+    var worksheet = this.ctx.root.$xlsxTemplate['xl/worksheets/' + sheetFullName].worksheet
+    if (worksheet.drawing) {
+      const drawings = Array.isArray(worksheet.drawing) ? worksheet.drawing : [worksheet.drawing]
+
+      for (const drawing of drawings) {
+        var rid = drawing.$['r:id']
+        this.ctx.root.$xlsxTemplate['xl/worksheets/_rels/' + sheetFullName + '.rels'].Relationships.Relationship.forEach(function (r) {
+          if (r.$.Id === rid) {
+            drawingFullName = r.$.Target.replace('../drawings/', '')
+          }
+        })
+      }
     } else {
       var numberOfDrawings = 0
       this.ctx.root.$xlsxTemplate['[Content_Types].xml'].Types.Override.forEach(function (o) {
@@ -261,7 +266,7 @@
       var drawingName = 'drawing' + (numberOfDrawings + 1)
       drawingFullName = drawingName + '.xml'
 
-      this.ctx.root.$xlsxTemplate['xl/worksheets/' + sheetFullName].worksheet.drawing = {
+      worksheet.drawing = {
         $: {
           'r:id': drawingName
         }

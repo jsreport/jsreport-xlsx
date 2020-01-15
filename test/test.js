@@ -118,7 +118,7 @@ describe('excel recipe', () => {
   }))
 
   it('should be able to use uploaded xlsx template', async () => {
-    let templateContent = fs.readFileSync(path.join(__dirname, 'Book1.xlsx')).toString('base64')
+    const templateContent = fs.readFileSync(path.join(__dirname, 'Book1.xlsx')).toString('base64')
     await reporter.documentStore.collection('xlsxTemplates').insert({
       contentRaw: templateContent,
       shortid: 'foo',
@@ -135,12 +135,12 @@ describe('excel recipe', () => {
         content: '{{{xlsxPrint}}}'
       }
     })
-    let workbook = xlsx.read(res.content)
+    const workbook = xlsx.read(res.content)
     workbook.Sheets.Sheet1.A1.v.should.be.eql(1)
   })
 
   it('should be able to use xlsx template content from request', async () => {
-    let templateContent = fs.readFileSync(path.join(__dirname, 'Book1.xlsx')).toString('base64')
+    const templateContent = fs.readFileSync(path.join(__dirname, 'Book1.xlsx')).toString('base64')
 
     const res = await reporter.render({
       template: {
@@ -153,7 +153,7 @@ describe('excel recipe', () => {
       }
     })
 
-    let workbook = xlsx.read(res.content)
+    const workbook = xlsx.read(res.content)
     workbook.Sheets.Sheet1.A1.v.should.be.eql(1)
   })
 
@@ -173,7 +173,7 @@ describe('excel recipe', () => {
   })
 
   it('should return iframe in preview with title including template name', async () => {
-    await reporter.documentStore.collection('templates').insert({name: 'foo', engine: 'none', recipe: 'html'})
+    await reporter.documentStore.collection('templates').insert({ name: 'foo', engine: 'none', recipe: 'html' })
     const res = await reporter.render({
       options: {
         preview: true
@@ -518,25 +518,25 @@ describe('excel recipe should not be broken by assets running after', () => {
 describe('jsonToXml', () => {
   describe('escaping node values', () => {
     it('should escape entities', () => {
-      jsonToXml({ a: `<>&` }).xml.should.containEql(`&lt;&gt;&amp;`)
+      jsonToXml({ a: '<>&' }).xml.should.containEql('&lt;&gt;&amp;')
     })
 
     it('should not escape quotes', () => {
-      jsonToXml({ a: `'"` }).xml.should.containEql(`'"`)
+      jsonToXml({ a: '\'"' }).xml.should.containEql('\'"')
     })
 
     it('should not escape amp which is already escaping another char', () => {
-      jsonToXml({ a: `&amp;&#x27;&quot;&#x27;&#x3D;;` }).xml.should.containEql(`&amp;&#x27;&quot;&#x27;&#x3D;;`)
+      jsonToXml({ a: '&amp;&#x27;&quot;&#x27;&#x3D;;' }).xml.should.containEql('&amp;&#x27;&quot;&#x27;&#x3D;;')
     })
   })
 
   describe('escaping attributes', () => {
     it('should escape entities', () => {
-      jsonToXml({ a: { $: { b: `<>&"'` } } }).xml.should.containEql(`&lt;&gt;&amp;&quot;&#x27;`)
+      jsonToXml({ a: { $: { b: '<>&"\'' } } }).xml.should.containEql('&lt;&gt;&amp;&quot;&#x27;')
     })
 
     it('should not escape amp which is already escaping another char', () => {
-      jsonToXml({ a: { $: { b: `&amp;&#x27;&quot;&#x27;&#x3D;;` } } }).xml.should.containEql(`&amp;&#x27;&quot;&#x27;&#x3D;;`)
+      jsonToXml({ a: { $: { b: '&amp;&#x27;&quot;&#x27;&#x3D;;' } } }).xml.should.containEql('&amp;&#x27;&quot;&#x27;&#x3D;;')
     })
   })
 })

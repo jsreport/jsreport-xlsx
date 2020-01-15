@@ -16,16 +16,17 @@ export default class ImageEditor extends Component {
   render () {
     const { entity } = this.props
 
-    return (<div className='custom-editor'>
-      <div><h1><i className='fa fa-file-excel-o' /> {entity.name}</h1></div>
-      <div>
-        <button className='button confirmation' onClick={() => this.download()}>
-          <i className='fa fa-download' /> Download xlsx template
-        </button>
-        <button className='button confirmation' onClick={() => XlsxUploadButton.OpenUpload(false)}>
-          <i className='fa fa-upload' /> Upload (edit) xlsx template
-        </button>
-      </div>
-    </div>)
+    return (
+      <div className='custom-editor'>
+        <div><h1><i className='fa fa-file-excel-o' /> {entity.name}</h1></div>
+        <div>
+          <button className='button confirmation' onClick={() => this.download()}>
+            <i className='fa fa-download' /> Download xlsx template
+          </button>
+          <button className='button confirmation' onClick={() => XlsxUploadButton.OpenUpload(false)}>
+            <i className='fa fa-upload' /> Upload (edit) xlsx template
+          </button>
+        </div>
+      </div>)
   }
 }

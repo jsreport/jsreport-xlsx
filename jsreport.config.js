@@ -13,13 +13,13 @@ const schema = {
 }
 
 module.exports = {
-  'name': 'xlsx',
-  'main': 'lib/index.js',
-  'optionsSchema': office.extendSchema('xlsx', {
+  name: 'xlsx',
+  main: 'lib/index.js',
+  optionsSchema: office.extendSchema('xlsx', {
     xlsx: { ...schema },
     extensions: {
       xlsx: { ...schema }
     }
   }),
-  'dependencies': ['templates', 'data']
+  dependencies: ['templates', 'data']
 }

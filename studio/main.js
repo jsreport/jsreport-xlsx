@@ -329,9 +329,9 @@ var ImageUploadButton = function (_Component) {
       }
 
       this.refs.file.dispatchEvent(new MouseEvent('click', {
-        'view': window,
-        'bubbles': false,
-        'cancelable': true
+        view: window,
+        bubbles: false,
+        cancelable: true
       }));
     }
   }, {
@@ -339,11 +339,9 @@ var ImageUploadButton = function (_Component) {
     value: function renderUpload() {
       var _this3 = this;
 
-      return _react2.default.createElement('input', {
-        type: 'file', key: 'file', ref: 'file', style: { display: 'none' }, onChange: function onChange(e) {
+      return _react2.default.createElement('input', { type: 'file', key: 'file', ref: 'file', style: { display: 'none' }, onChange: function onChange(e) {
           return _this3.upload(e);
-        },
-        accept: '.xlsx' });
+        }, accept: '.xlsx' });
     }
   }, {
     key: 'render',
@@ -445,8 +443,7 @@ _jsreportStudio2.default.entityEditorComponentKeyResolvers.push(function (entity
               'We need to upload your xlsx to our publicly hosted server to be able to use Office Online Service for previewing here in the studio. You can disable it in the configuration, see ',
               React.createElement(
                 'a',
-                {
-                  href: 'https://jsreport.net/learn/xlsx#preview-in-studio', target: '_blank' },
+                { href: 'https://jsreport.net/learn/xlsx#preview-in-studio', rel: 'noopener noreferrer', target: '_blank' },
                 'the docs'
               ),
               ' for details.'
@@ -519,8 +516,7 @@ _jsreportStudio2.default.previewListeners.push(function (request, entities) {
       'We need to upload your office report to our publicly hosted server to be able to use Excel Online Service for previewing here in the studio. You can disable it in the configuration, see ',
       React.createElement(
         'a',
-        {
-          href: 'https://jsreport.net/learn/xlsx', target: '_blank' },
+        { href: 'https://jsreport.net/learn/xlsx', rel: 'noopener noreferrer', target: '_blank' },
         'https://jsreport.net/learn/xlsx'
       ),
       ' for details.'

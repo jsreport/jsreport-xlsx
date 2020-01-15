@@ -302,7 +302,7 @@
       this.ctx.root.$xlsxTemplate['xl/worksheets/_rels/' + sheetFullName + '.rels'] || {
         Relationships: {
           $: {
-            'xmlns': 'http://schemas.openxmlformats.org/package/2006/relationships'
+            xmlns: 'http://schemas.openxmlformats.org/package/2006/relationships'
           },
           Relationship: []
         }

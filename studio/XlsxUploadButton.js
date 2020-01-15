@@ -51,7 +51,7 @@ export default class ImageUploadButton extends Component {
           name: file.name.replace(/.xlsx$/, '')
         })
 
-        let response = await Studio.api.post('/odata/xlsxTemplates', {
+        const response = await Studio.api.post('/odata/xlsxTemplates', {
           data: xlsx
         })
 
@@ -111,16 +111,14 @@ export default class ImageUploadButton extends Component {
     }
 
     this.refs.file.dispatchEvent(new MouseEvent('click', {
-      'view': window,
-      'bubbles': false,
-      'cancelable': true
+      view: window,
+      bubbles: false,
+      cancelable: true
     }))
   }
 
   renderUpload () {
-    return <input
-      type='file' key='file' ref='file' style={{display: 'none'}} onChange={(e) => this.upload(e)}
-      accept='.xlsx' />
+    return <input type='file' key='file' ref='file' style={{ display: 'none' }} onChange={(e) => this.upload(e)} accept='.xlsx' />
   }
 
   render () {

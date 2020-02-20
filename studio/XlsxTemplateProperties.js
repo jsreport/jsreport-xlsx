@@ -8,18 +8,34 @@ export default class XlsxTemplateProperties extends Component {
     return Object.keys(entities).filter((k) => entities[k].__entitySet === 'xlsxTemplates').map((k) => entities[k])
   }
 
+  static selectAssets (entities) {
+    return Object.keys(entities).filter((k) => entities[k].__entitySet === 'assets').map((k) => entities[k])
+  }
+
   static title (entity, entities) {
-    if (!entity.xlsxTemplate || !entity.xlsxTemplate.shortid) {
+    if (
+      !entity.xlsxTemplate ||
+      (!entity.xlsxTemplate.shortid && !entity.xlsxTemplate.templateAssetShortid)
+    ) {
       return 'xlsx template'
     }
 
     const foundItems = XlsxTemplateProperties.selectItems(entities).filter((e) => entity.xlsxTemplate.shortid === e.shortid)
+    const foundAssets = XlsxTemplateProperties.selectAssets(entities).filter((e) => entity.xlsxTemplate.templateAssetShortid === e.shortid)
 
-    if (!foundItems.length) {
+    if (!foundItems.length && !foundAssets.length) {
       return 'xlsx template'
     }
 
-    return 'xlsx template: ' + foundItems[0].name
+    let name
+
+    if (foundAssets.length) {
+      name = foundAssets[0].name
+    } else {
+      name = foundItems[0].name
+    }
+
+    return 'xlsx template: ' + name
   }
 
   componentDidMount () {
@@ -38,10 +54,39 @@ export default class XlsxTemplateProperties extends Component {
     }
 
     const updatedXlsxTemplates = Object.keys(entities).filter((k) => entities[k].__entitySet === 'xlsxTemplates' && entities[k].shortid === entity.xlsxTemplate.shortid)
+    const updatedXlsxAssets = Object.keys(entities).filter((k) => entities[k].__entitySet === 'assets' && entities[k].shortid === entity.xlsxTemplate.templateAssetShortid)
 
-    if (updatedXlsxTemplates.length === 0) {
-      onChange({ _id: entity._id, xlsxTemplate: null })
+    const newXlsxTemplate = { ...entity.xlsxTemplate }
+    let changed = false
+
+    if (entity.xlsxTemplate.shortid && updatedXlsxTemplates.length === 0) {
+      changed = true
+      delete newXlsxTemplate.shortid
     }
+
+    if (entity.xlsxTemplate.templateAssetShortid && updatedXlsxAssets.length === 0) {
+      changed = true
+      delete newXlsxTemplate.templateAssetShortid
+    }
+
+    if (changed) {
+      onChange({ _id: entity._id, xlsxTemplate: Object.keys(newXlsxTemplate).length ? newXlsxTemplate : null })
+    }
+  }
+
+  changeXlsxTemplate (oldXlsxTemplate, prop, value) {
+    let newValue
+
+    if (value == null) {
+      newValue = { ...oldXlsxTemplate }
+      delete newValue[prop]
+    } else {
+      return { ...oldXlsxTemplate, [prop]: value }
+    }
+
+    newValue = Object.keys(newValue).length ? newValue : null
+
+    return newValue
   }
 
   render () {
@@ -50,11 +95,27 @@ export default class XlsxTemplateProperties extends Component {
     return (
       <div className='properties-section'>
         <div className='form-group'>
+          <label>xlsx asset</label>
+          <EntityRefSelect
+            headingLabel='Select docx template'
+            value={entity.xlsxTemplate ? entity.xlsxTemplate.templateAssetShortid : ''}
+            onChange={(selected) => onChange({
+              _id: entity._id,
+              xlsxTemplate: this.changeXlsxTemplate(entity.xlsxTemplate, 'templateAssetShortid', selected != null && selected.length > 0 ? selected[0].shortid : null)
+            })}
+            filter={(references) => ({ data: references.assets })}
+          />
+        </div>
+        <div className='form-group'>
+          <label>xlsx template (deprecated)</label>
           <EntityRefSelect
             headingLabel='Select xlsx template'
             filter={(references) => ({ xlsxTemplates: references.xlsxTemplates })}
             value={entity.xlsxTemplate ? entity.xlsxTemplate.shortid : null}
-            onChange={(selected) => onChange({ _id: entity._id, xlsxTemplate: selected != null && selected.length > 0 ? { shortid: selected[0].shortid } : null })}
+            onChange={(selected) => onChange({
+              _id: entity._id,
+              xlsxTemplate: this.changeXlsxTemplate(entity.xlsxTemplate, 'shortid', selected != null && selected.length > 0 ? selected[0].shortid : null)
+            })}
           />
         </div>
       </div>

@@ -29,6 +29,12 @@ describe('excel recipe', () => {
     return reporter.init()
   })
 
+  afterEach(() => {
+    if (reporter) {
+      return reporter.close()
+    }
+  })
+
   const test = (contentName, assertion) => {
     return () => reporter.render({
       template: {
@@ -135,6 +141,7 @@ describe('excel recipe', () => {
         content: '{{{xlsxPrint}}}'
       }
     })
+
     const workbook = xlsx.read(res.content)
     workbook.Sheets.Sheet1.A1.v.should.be.eql(1)
   })
@@ -233,6 +240,12 @@ describe('excel recipe with previewInExcelOnline false', () => {
     return reporter.init()
   })
 
+  afterEach(() => {
+    if (reporter) {
+      return reporter.close()
+    }
+  })
+
   it('should return excel when preview true', () => {
     return reporter.render({
       options: {
@@ -275,6 +288,12 @@ describe('excel recipe with office.preview.enabled=false and extensions.xlsx.pre
     return reporter.init()
   })
 
+  afterEach(() => {
+    if (reporter) {
+      return reporter.close()
+    }
+  })
+
   it('should return html when preview true', () => {
     return reporter.render({
       options: {
@@ -315,6 +334,12 @@ describe('excel recipe with office.preview.enabled=false and extensions.xlsx.pre
     return reporter.init()
   })
 
+  afterEach(() => {
+    if (reporter) {
+      return reporter.close()
+    }
+  })
+
   it('should return html when preview true', () => {
     return reporter.render({
       options: {
@@ -353,6 +378,12 @@ describe('excel recipe with office.preview.enabled=false and xlsx.previewInExcel
     return reporter.init()
   })
 
+  afterEach(() => {
+    if (reporter) {
+      return reporter.close()
+    }
+  })
+
   it('should return html when preview true', () => {
     return reporter.render({
       options: {
@@ -388,6 +419,12 @@ describe('excel recipe with disabled add parsing', () => {
     })
 
     return reporter.init()
+  })
+
+  afterEach(() => {
+    if (reporter) {
+      return reporter.close()
+    }
   })
 
   it('should be add row', () => {
@@ -471,6 +508,12 @@ describe('excel recipe with in process helpers', () => {
     return reporter.init()
   })
 
+  afterEach(() => {
+    if (reporter) {
+      return reporter.close()
+    }
+  })
+
   it('should be able to use native helpers', () => {
     return reporter.render({
       template: {
@@ -500,6 +543,12 @@ describe('excel recipe should not be broken by assets running after', () => {
     reporter.use(assets())
 
     return reporter.init()
+  })
+
+  afterEach(() => {
+    if (reporter) {
+      return reporter.close()
+    }
   })
 
   it('should be able to use native helpers', () => {

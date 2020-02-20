@@ -27,6 +27,7 @@ export default class ImageEditor extends Component {
             <i className='fa fa-upload' /> Upload (edit) xlsx template
           </button>
         </div>
-      </div>)
+      </div>
+    )
   }
 }

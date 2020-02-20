@@ -101,9 +101,10 @@ Studio.previewListeners.push((request, entities) => {
 
   Studio.setSetting('office-preview-informed', true)
 
-  Studio.openModal(() =>
+  Studio.openModal(() => (
     <div>
     We need to upload your office report to our publicly hosted server to be able to use
     Excel Online Service for previewing here in the studio. You can disable it in the configuration, see <a href='https://jsreport.net/learn/xlsx' rel='noopener noreferrer' target='_blank'>https://jsreport.net/learn/xlsx</a> for details.
-    </div>)
+    </div>
+  ))
 })

@@ -709,12 +709,12 @@ var XlsxTemplateProperties = function (_Component) {
 
       if (entity.xlsxTemplate.shortid && updatedXlsxTemplates.length === 0) {
         changed = true;
-        delete newXlsxTemplate.shortid;
+        newXlsxTemplate.shortid = null;
       }
 
       if (entity.xlsxTemplate.templateAssetShortid && updatedXlsxAssets.length === 0) {
         changed = true;
-        delete newXlsxTemplate.templateAssetShortid;
+        newXlsxTemplate.templateAssetShortid = null;
       }
 
       if (changed) {
@@ -728,7 +728,7 @@ var XlsxTemplateProperties = function (_Component) {
 
       if (value == null) {
         newValue = _extends({}, oldXlsxTemplate);
-        delete newValue[prop];
+        newValue[prop] = null;
       } else {
         return _extends({}, oldXlsxTemplate, _defineProperty({}, prop, value));
       }

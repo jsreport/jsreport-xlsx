@@ -61,12 +61,12 @@ export default class XlsxTemplateProperties extends Component {
 
     if (entity.xlsxTemplate.shortid && updatedXlsxTemplates.length === 0) {
       changed = true
-      delete newXlsxTemplate.shortid
+      newXlsxTemplate.shortid = null
     }
 
     if (entity.xlsxTemplate.templateAssetShortid && updatedXlsxAssets.length === 0) {
       changed = true
-      delete newXlsxTemplate.templateAssetShortid
+      newXlsxTemplate.templateAssetShortid = null
     }
 
     if (changed) {
@@ -79,7 +79,7 @@ export default class XlsxTemplateProperties extends Component {
 
     if (value == null) {
       newValue = { ...oldXlsxTemplate }
-      delete newValue[prop]
+      newValue[prop] = null
     } else {
       return { ...oldXlsxTemplate, [prop]: value }
     }

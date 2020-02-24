@@ -693,32 +693,23 @@ var XlsxTemplateProperties = function (_Component) {
           onChange = _props.onChange;
 
 
-      if (!entity.xlsxTemplate) {
+      if (!entity.xlsxTemplate && !entity.xlsx) {
         return;
       }
 
       var updatedXlsxTemplates = Object.keys(entities).filter(function (k) {
-        return entities[k].__entitySet === 'xlsxTemplates' && entities[k].shortid === entity.xlsxTemplate.shortid;
+        return entities[k].__entitySet === 'xlsxTemplates' && entity.xlsxTemplate != null && entities[k].shortid === entity.xlsxTemplate.shortid;
       });
       var updatedXlsxAssets = Object.keys(entities).filter(function (k) {
-        return entities[k].__entitySet === 'assets' && entities[k].shortid === entity.xlsxTemplate.templateAssetShortid;
+        return entities[k].__entitySet === 'assets' && entity.xlsx != null && entities[k].shortid === entity.xlsx.templateAssetShortid;
       });
 
-      var newXlsxTemplate = _extends({}, entity.xlsxTemplate);
-      var changed = false;
-
-      if (entity.xlsxTemplate.shortid && updatedXlsxTemplates.length === 0) {
-        changed = true;
-        newXlsxTemplate.shortid = null;
+      if (entity.xlsx && entity.xlsx.templateAssetShortid && updatedXlsxAssets.length === 0) {
+        onChange({ _id: entity._id, xlsx: null });
       }
 
-      if (entity.xlsxTemplate.templateAssetShortid && updatedXlsxAssets.length === 0) {
-        changed = true;
-        newXlsxTemplate.templateAssetShortid = null;
-      }
-
-      if (changed) {
-        onChange({ _id: entity._id, xlsxTemplate: Object.keys(newXlsxTemplate).length ? newXlsxTemplate : null });
+      if (entity.xlsxTemplate && entity.xlsxTemplate.shortid && updatedXlsxTemplates.length === 0) {
+        onChange({ _id: entity._id, xlsxTemplate: null });
       }
     }
   }, {
@@ -740,8 +731,6 @@ var XlsxTemplateProperties = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this2 = this;
-
       var _props2 = this.props,
           entity = _props2.entity,
           _onChange = _props2.onChange;
@@ -760,15 +749,15 @@ var XlsxTemplateProperties = function (_Component) {
           ),
           _react2.default.createElement(EntityRefSelect, {
             headingLabel: 'Select docx template',
-            value: entity.xlsxTemplate ? entity.xlsxTemplate.templateAssetShortid : '',
+            value: entity.xlsx ? entity.xlsx.templateAssetShortid : '',
             onChange: function onChange(selected) {
               return _onChange({
                 _id: entity._id,
-                xlsxTemplate: _this2.changeXlsxTemplate(entity.xlsxTemplate, 'templateAssetShortid', selected != null && selected.length > 0 ? selected[0].shortid : null)
+                xlsx: selected != null && selected.length > 0 ? { templateAssetShortid: selected[0].shortid } : null
               });
             },
             filter: function filter(references) {
-              return { data: references.assets };
+              return { assets: references.assets };
             }
           })
         ),
@@ -789,7 +778,7 @@ var XlsxTemplateProperties = function (_Component) {
             onChange: function onChange(selected) {
               return _onChange({
                 _id: entity._id,
-                xlsxTemplate: _this2.changeXlsxTemplate(entity.xlsxTemplate, 'shortid', selected != null && selected.length > 0 ? selected[0].shortid : null)
+                xlsxTemplate: selected != null && selected.length > 0 ? { shortid: selected[0].shortid } : null
               });
             }
           })
@@ -817,15 +806,15 @@ var XlsxTemplateProperties = function (_Component) {
   }, {
     key: 'title',
     value: function title(entity, entities) {
-      if (!entity.xlsxTemplate || !entity.xlsxTemplate.shortid && !entity.xlsxTemplate.templateAssetShortid) {
+      if ((!entity.xlsxTemplate || !entity.xlsxTemplate.shortid) && (!entity.xlsx || !entity.xlsx.templateAssetShortid)) {
         return 'xlsx template';
       }
 
       var foundItems = XlsxTemplateProperties.selectItems(entities).filter(function (e) {
-        return entity.xlsxTemplate.shortid === e.shortid;
+        return entity.xlsxTemplate != null && entity.xlsxTemplate.shortid === e.shortid;
       });
       var foundAssets = XlsxTemplateProperties.selectAssets(entities).filter(function (e) {
-        return entity.xlsxTemplate.templateAssetShortid === e.shortid;
+        return entity.xlsx != null && entity.xlsx.templateAssetShortid === e.shortid;
       });
 
       if (!foundItems.length && !foundAssets.length) {

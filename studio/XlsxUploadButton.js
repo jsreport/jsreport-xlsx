@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import Studio from 'jsreport-studio'
 
@@ -5,8 +6,8 @@ let _xlsxTemplateUploadButton
 
 export default class ImageUploadButton extends Component {
   static propTypes = {
-    tab: React.PropTypes.object,
-    onUpdate: React.PropTypes.func.isRequired
+    tab: PropTypes.object,
+    onUpdate: PropTypes.func.isRequired
   }
 
   // we need to have global action in main_dev which is triggered when users clicks on + on images

@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -104,6 +104,12 @@ module.exports = Studio.libraries['filesaver.js-npm'];
 
 /***/ }),
 /* 3 */
+/***/ (function(module, exports) {
+
+module.exports = Studio.libraries['prop-types'];
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -140,7 +146,7 @@ var b64toBlob = function b64toBlob(b64Data) {
 exports.default = b64toBlob;
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -151,6 +157,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _propTypes = __webpack_require__(3);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
 
 var _react = __webpack_require__(0);
 
@@ -366,12 +376,12 @@ var ImageUploadButton = function (_Component) {
 }(_react.Component);
 
 ImageUploadButton.propTypes = {
-  tab: _react2.default.PropTypes.object,
-  onUpdate: _react2.default.PropTypes.func.isRequired };
+  tab: _propTypes2.default.object,
+  onUpdate: _propTypes2.default.func.isRequired };
 exports.default = ImageUploadButton;
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -383,19 +393,19 @@ var _filesaver = __webpack_require__(2);
 
 var _filesaver2 = _interopRequireDefault(_filesaver);
 
-var _XlsxEditor = __webpack_require__(6);
+var _XlsxEditor = __webpack_require__(7);
 
 var _XlsxEditor2 = _interopRequireDefault(_XlsxEditor);
 
-var _b64toBlob = __webpack_require__(3);
+var _b64toBlob = __webpack_require__(4);
 
 var _b64toBlob2 = _interopRequireDefault(_b64toBlob);
 
-var _XlsxUploadButton = __webpack_require__(4);
+var _XlsxUploadButton = __webpack_require__(5);
 
 var _XlsxUploadButton2 = _interopRequireDefault(_XlsxUploadButton);
 
-var _XlsxTemplateProperties = __webpack_require__(7);
+var _XlsxTemplateProperties = __webpack_require__(8);
 
 var _XlsxTemplateProperties2 = _interopRequireDefault(_XlsxTemplateProperties);
 
@@ -525,7 +535,7 @@ _jsreportStudio2.default.previewListeners.push(function (request, entities) {
 });
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -537,15 +547,19 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _propTypes = __webpack_require__(3);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
 var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _b64toBlob = __webpack_require__(3);
+var _b64toBlob = __webpack_require__(4);
 
 var _b64toBlob2 = _interopRequireDefault(_b64toBlob);
 
-var _XlsxUploadButton = __webpack_require__(4);
+var _XlsxUploadButton = __webpack_require__(5);
 
 var _XlsxUploadButton2 = _interopRequireDefault(_XlsxUploadButton);
 
@@ -626,12 +640,12 @@ var ImageEditor = function (_Component) {
 }(_react.Component);
 
 ImageEditor.propTypes = {
-  entity: _react2.default.PropTypes.object.isRequired
+  entity: _propTypes2.default.object.isRequired
 };
 exports.default = ImageEditor;
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

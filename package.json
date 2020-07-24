@@ -51,7 +51,7 @@
     "jsreport-assets": "1.6.0",
     "jsreport-core": "2.9.0",
     "jsreport-handlebars": "2.1.0",
-    "jsreport-studio-dev": "1.5.0",
+    "jsreport-studio-dev": "github:jsreport/jsreport-studio-dev",
     "jsreport-templates": "2.4.0",
     "mocha": "7.0.0",
     "should": "13.2.3",

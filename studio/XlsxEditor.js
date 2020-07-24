@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import b64toBlob from './b64toBlob.js'
 import XlsxUploadButton from './XlsxUploadButton.js'
@@ -5,7 +6,7 @@ import fileSaver from 'filesaver.js-npm'
 
 export default class ImageEditor extends Component {
   static propTypes = {
-    entity: React.PropTypes.object.isRequired
+    entity: PropTypes.object.isRequired
   }
 
   download () {

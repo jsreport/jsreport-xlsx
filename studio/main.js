@@ -182,16 +182,19 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var _xlsxTemplateUploadButton = void 0;
 
-var ImageUploadButton = function (_Component) {
-  _inherits(ImageUploadButton, _Component);
+var XlsxUploadButton = function (_Component) {
+  _inherits(XlsxUploadButton, _Component);
 
-  function ImageUploadButton() {
-    _classCallCheck(this, ImageUploadButton);
+  function XlsxUploadButton(props) {
+    _classCallCheck(this, XlsxUploadButton);
 
-    return _possibleConstructorReturn(this, (ImageUploadButton.__proto__ || Object.getPrototypeOf(ImageUploadButton)).apply(this, arguments));
+    var _this = _possibleConstructorReturn(this, (XlsxUploadButton.__proto__ || Object.getPrototypeOf(XlsxUploadButton)).call(this, props));
+
+    _this.inputFileRef = _react2.default.createRef();
+    return _this;
   }
 
-  _createClass(ImageUploadButton, [{
+  _createClass(XlsxUploadButton, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
       _xlsxTemplateUploadButton = this;
@@ -220,7 +223,7 @@ var ImageUploadButton = function (_Component) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _this2.refs.file.value = '';
+                _this2.inputFileRef.current.value = '';
 
                 if (!_this2.forNew) {
                   _context.next = 16;
@@ -327,18 +330,18 @@ var ImageUploadButton = function (_Component) {
       this.forNew = forNew;
 
       if (options.defaults) {
-        this.refs.file.xlsxDefaults = options.defaults;
+        this.inputFileRef.current.xlsxDefaults = options.defaults;
       } else {
-        delete this.refs.file.xlsxDefaults;
+        delete this.inputFileRef.current.xlsxDefaults;
       }
 
       if (options.uploadCallback) {
-        this.refs.file.uploadCallback = options.uploadCallback;
+        this.inputFileRef.current.uploadCallback = options.uploadCallback;
       } else {
-        delete this.refs.file.uploadCallback;
+        delete this.inputFileRef.current.uploadCallback;
       }
 
-      this.refs.file.dispatchEvent(new MouseEvent('click', {
+      this.inputFileRef.current.dispatchEvent(new MouseEvent('click', {
         view: window,
         bubbles: false,
         cancelable: true
@@ -349,9 +352,15 @@ var ImageUploadButton = function (_Component) {
     value: function renderUpload() {
       var _this3 = this;
 
-      return _react2.default.createElement('input', { type: 'file', key: 'file', ref: 'file', style: { display: 'none' }, onChange: function onChange(e) {
+      return _react2.default.createElement('input', {
+        type: 'file',
+        key: 'file',
+        ref: this.inputFileRef,
+        style: { display: 'none' },
+        onChange: function onChange(e) {
           return _this3.upload(e);
-        }, accept: '.xlsx' });
+        }, accept: '.xlsx'
+      });
     }
   }, {
     key: 'render',
@@ -372,13 +381,13 @@ var ImageUploadButton = function (_Component) {
     }
   }]);
 
-  return ImageUploadButton;
+  return XlsxUploadButton;
 }(_react.Component);
 
-ImageUploadButton.propTypes = {
+XlsxUploadButton.propTypes = {
   tab: _propTypes2.default.object,
   onUpdate: _propTypes2.default.func.isRequired };
-exports.default = ImageUploadButton;
+exports.default = XlsxUploadButton;
 
 /***/ }),
 /* 6 */

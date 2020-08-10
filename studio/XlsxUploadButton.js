@@ -4,7 +4,13 @@ import Studio from 'jsreport-studio'
 
 let _xlsxTemplateUploadButton
 
-export default class ImageUploadButton extends Component {
+class XlsxUploadButton extends Component {
+  constructor (props) {
+    super(props)
+
+    this.inputFileRef = React.createRef()
+  }
+
   static propTypes = {
     tab: PropTypes.object,
     onUpdate: PropTypes.func.isRequired
@@ -35,7 +41,7 @@ export default class ImageUploadButton extends Component {
     const reader = new FileReader()
 
     reader.onloadend = async () => {
-      this.refs.file.value = ''
+      this.inputFileRef.current.value = ''
       if (this.forNew) {
         if (Studio.workspaces) {
           await Studio.workspaces.save()
@@ -100,18 +106,18 @@ export default class ImageUploadButton extends Component {
     this.forNew = forNew
 
     if (options.defaults) {
-      this.refs.file.xlsxDefaults = options.defaults
+      this.inputFileRef.current.xlsxDefaults = options.defaults
     } else {
-      delete this.refs.file.xlsxDefaults
+      delete this.inputFileRef.current.xlsxDefaults
     }
 
     if (options.uploadCallback) {
-      this.refs.file.uploadCallback = options.uploadCallback
+      this.inputFileRef.current.uploadCallback = options.uploadCallback
     } else {
-      delete this.refs.file.uploadCallback
+      delete this.inputFileRef.current.uploadCallback
     }
 
-    this.refs.file.dispatchEvent(new MouseEvent('click', {
+    this.inputFileRef.current.dispatchEvent(new MouseEvent('click', {
       view: window,
       bubbles: false,
       cancelable: true
@@ -119,10 +125,20 @@ export default class ImageUploadButton extends Component {
   }
 
   renderUpload () {
-    return <input type='file' key='file' ref='file' style={{ display: 'none' }} onChange={(e) => this.upload(e)} accept='.xlsx' />
+    return (
+      <input
+        type='file'
+        key='file'
+        ref={this.inputFileRef}
+        style={{ display: 'none' }}
+        onChange={(e) => this.upload(e)} accept='.xlsx'
+      />
+    )
   }
 
   render () {
     return this.renderUpload(true)
   }
 }
+
+export default XlsxUploadButton

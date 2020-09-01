@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -104,12 +104,6 @@ module.exports = Studio.libraries['filesaver.js-npm'];
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports) {
-
-module.exports = Studio.libraries['prop-types'];
-
-/***/ }),
-/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -146,7 +140,7 @@ var b64toBlob = function b64toBlob(b64Data) {
 exports.default = b64toBlob;
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -157,10 +151,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _propTypes = __webpack_require__(3);
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
 
 var _react = __webpack_require__(0);
 
@@ -193,6 +183,10 @@ var XlsxUploadButton = function (_Component) {
     _this.inputFileRef = _react2.default.createRef();
     return _this;
   }
+
+  // we need to have global action in main_dev which is triggered when users clicks on + on images
+  // this triggers invisible button in the toolbar
+
 
   _createClass(XlsxUploadButton, [{
     key: 'componentDidMount',
@@ -369,10 +363,6 @@ var XlsxUploadButton = function (_Component) {
     }
   }], [{
     key: 'OpenUpload',
-
-
-    // we need to have global action in main_dev which is triggered when users clicks on + on images
-    // this triggers invisible button in the toolbar
     value: function OpenUpload() {
       var forNew = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
       var options = arguments[1];
@@ -384,13 +374,10 @@ var XlsxUploadButton = function (_Component) {
   return XlsxUploadButton;
 }(_react.Component);
 
-XlsxUploadButton.propTypes = {
-  tab: _propTypes2.default.object,
-  onUpdate: _propTypes2.default.func.isRequired };
 exports.default = XlsxUploadButton;
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -402,19 +389,19 @@ var _filesaver = __webpack_require__(2);
 
 var _filesaver2 = _interopRequireDefault(_filesaver);
 
-var _XlsxEditor = __webpack_require__(7);
+var _XlsxEditor = __webpack_require__(6);
 
 var _XlsxEditor2 = _interopRequireDefault(_XlsxEditor);
 
-var _b64toBlob = __webpack_require__(4);
+var _b64toBlob = __webpack_require__(3);
 
 var _b64toBlob2 = _interopRequireDefault(_b64toBlob);
 
-var _XlsxUploadButton = __webpack_require__(5);
+var _XlsxUploadButton = __webpack_require__(4);
 
 var _XlsxUploadButton2 = _interopRequireDefault(_XlsxUploadButton);
 
-var _XlsxTemplateProperties = __webpack_require__(8);
+var _XlsxTemplateProperties = __webpack_require__(7);
 
 var _XlsxTemplateProperties2 = _interopRequireDefault(_XlsxTemplateProperties);
 
@@ -544,7 +531,7 @@ _jsreportStudio2.default.previewListeners.push(function (request, entities) {
 });
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -556,19 +543,15 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _propTypes = __webpack_require__(3);
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
-
 var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _b64toBlob = __webpack_require__(4);
+var _b64toBlob = __webpack_require__(3);
 
 var _b64toBlob2 = _interopRequireDefault(_b64toBlob);
 
-var _XlsxUploadButton = __webpack_require__(5);
+var _XlsxUploadButton = __webpack_require__(4);
 
 var _XlsxUploadButton2 = _interopRequireDefault(_XlsxUploadButton);
 
@@ -584,16 +567,16 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var ImageEditor = function (_Component) {
-  _inherits(ImageEditor, _Component);
+var XlsxEditor = function (_Component) {
+  _inherits(XlsxEditor, _Component);
 
-  function ImageEditor() {
-    _classCallCheck(this, ImageEditor);
+  function XlsxEditor() {
+    _classCallCheck(this, XlsxEditor);
 
-    return _possibleConstructorReturn(this, (ImageEditor.__proto__ || Object.getPrototypeOf(ImageEditor)).apply(this, arguments));
+    return _possibleConstructorReturn(this, (XlsxEditor.__proto__ || Object.getPrototypeOf(XlsxEditor)).apply(this, arguments));
   }
 
-  _createClass(ImageEditor, [{
+  _createClass(XlsxEditor, [{
     key: 'download',
     value: function download() {
       var blob = (0, _b64toBlob2.default)(this.props.entity.contentRaw, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -645,16 +628,13 @@ var ImageEditor = function (_Component) {
     }
   }]);
 
-  return ImageEditor;
+  return XlsxEditor;
 }(_react.Component);
 
-ImageEditor.propTypes = {
-  entity: _propTypes2.default.object.isRequired
-};
-exports.default = ImageEditor;
+exports.default = XlsxEditor;
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

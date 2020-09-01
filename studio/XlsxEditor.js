@@ -1,14 +1,9 @@
-import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import b64toBlob from './b64toBlob.js'
 import XlsxUploadButton from './XlsxUploadButton.js'
 import fileSaver from 'filesaver.js-npm'
 
-export default class ImageEditor extends Component {
-  static propTypes = {
-    entity: PropTypes.object.isRequired
-  }
-
+class XlsxEditor extends Component {
   download () {
     const blob = b64toBlob(this.props.entity.contentRaw, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     fileSaver.saveAs(blob, this.props.entity.name)
@@ -32,3 +27,5 @@ export default class ImageEditor extends Component {
     )
   }
 }
+
+export default XlsxEditor

@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import Studio from 'jsreport-studio'
 
@@ -9,11 +8,6 @@ class XlsxUploadButton extends Component {
     super(props)
 
     this.inputFileRef = React.createRef()
-  }
-
-  static propTypes = {
-    tab: PropTypes.object,
-    onUpdate: PropTypes.func.isRequired
   }
 
   // we need to have global action in main_dev which is triggered when users clicks on + on images
